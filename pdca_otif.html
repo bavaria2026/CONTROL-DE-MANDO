@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDCA OTIF — CD AUTOSUR 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+:root{
+  --gold:#FCD039;--gold-d:#d4ab1a;--gold-s:rgba(252,208,57,.12);
+  --dk:#232F3D;--dk-90:rgba(35,47,61,.92);--dk-s:rgba(35,47,61,.08);
+  --sl:#196989;--sl-a:rgba(25,105,137,.7);--sl-s:rgba(25,105,137,.1);
+  --tl:#4CC4B0;--tl-a:rgba(76,196,176,.7);--tl-s:rgba(76,196,176,.12);
+  --bg:#f0f2f5;--card:#fff;--txt:#232F3D;--mut:#6b7a8d;--bor:#e2e6eb;
+  --red:#e74c3c;--red-s:rgba(231,76,60,.1);--grn:#2ecc71;--org:#f39c12;
+  /* Phase colors */
+  --p-plan:#196989;--p-do:#4CC4B0;--p-check:#FCD039;--p-act:#232F3D;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.55}
+
+/* NAV */
+.topbar{background:var(--dk);color:#fff;position:sticky;top:0;z-index:200;box-shadow:0 4px 24px rgba(35,47,61,.3)}
+.topbar-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;max-width:1500px;margin:0 auto}
+.topbar h1{font-size:1rem;font-weight:800;letter-spacing:.3px}
+.topbar .badge{background:var(--gold);color:var(--dk);font-size:.6rem;padding:4px 12px;border-radius:20px;font-weight:800;letter-spacing:.5px}
+.phase-nav{background:var(--dk-90);border-top:1px solid rgba(255,255,255,.08);overflow-x:auto}
+.phase-nav-inner{display:flex;max-width:1500px;margin:0 auto;padding:0 16px}
+.phase-nav::-webkit-scrollbar{height:0}
+.pnav-group{display:flex;align-items:stretch}
+.pnav-label{font-size:.55rem;font-weight:800;letter-spacing:1px;padding:10px 14px;display:flex;align-items:center;gap:6px;border-bottom:3px solid transparent;cursor:default}
+.pnav-label .dot{width:8px;height:8px;border-radius:50%}
+.pnav-btn{background:none;border:none;color:rgba(255,255,255,.45);padding:10px 14px;font-size:.72rem;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:.2s;font-weight:700;font-family:inherit;letter-spacing:.2px}
+.pnav-btn:hover{color:rgba(255,255,255,.8)}
+.pnav-btn.active{color:#fff;border-bottom-color:var(--gold)}
+.pnav-sep{width:1px;background:rgba(255,255,255,.06);margin:6px 0}
+
+/* SECTIONS */
+.sec{display:none;padding:24px;max-width:1500px;margin:0 auto;animation:fadeUp .3s}
+.sec.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* Phase banner */
+.phase-banner{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding:16px 22px;border-radius:14px;color:#fff}
+.phase-banner.plan{background:linear-gradient(135deg,var(--p-plan),#1d7fa5)}
+.phase-banner.do{background:linear-gradient(135deg,#3aaa96,var(--p-do))}
+.phase-banner.check{background:linear-gradient(135deg,#d4ab1a,var(--p-check));color:var(--dk)}
+.phase-banner.act{background:linear-gradient(135deg,var(--p-act),#3a4f66)}
+.phase-banner .phase-icon{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;flex-shrink:0}
+.phase-banner.check .phase-icon{background:rgba(0,0,0,.1)}
+.phase-banner .phase-text h2{font-size:1.15rem;font-weight:800}
+.phase-banner .phase-text p{font-size:.78rem;opacity:.85;margin-top:2px;font-weight:500}
+
+/* CARDS */
+.card{background:var(--card);border-radius:14px;padding:22px;margin-bottom:16px;box-shadow:0 2px 12px rgba(35,47,61,.05);border:1px solid var(--bor);transition:.2s}
+.card:hover{box-shadow:0 4px 20px rgba(35,47,61,.09)}
+.card-h{font-size:.78rem;font-weight:800;color:var(--sl);margin-bottom:14px;text-transform:uppercase;letter-spacing:.7px;display:flex;align-items:center;gap:8px}
+.card-h::before{content:'';width:4px;height:16px;border-radius:2px;background:var(--gold)}
+
+/* GRID helpers */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+@media(max-width:860px){.g2,.g3{grid-template-columns:1fr}}
+
+/* INFO */
+.info-label{font-size:.6rem;color:var(--mut);text-transform:uppercase;font-weight:700;letter-spacing:.6px}
+.info-value{font-size:.9rem;font-weight:700}
+
+/* METRIC */
+.mc{background:var(--card);border-radius:12px;padding:16px;text-align:center;border:1px solid var(--bor);position:relative;overflow:hidden}
+.mc::after{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+.mc .ml{font-size:.58rem;color:var(--mut);text-transform:uppercase;font-weight:700;letter-spacing:.5px;margin-bottom:5px}
+.mc .mv{font-size:1.5rem;font-weight:900}
+.mc .ms{font-size:.66rem;color:var(--mut);margin-top:3px;font-weight:500}
+.mc.c-tl::after{background:var(--tl)}.mc.c-tl .mv{color:#2aa88e}
+.mc.c-gd::after{background:var(--gold)}.mc.c-gd .mv{color:var(--gold-d)}
+.mc.c-dk::after{background:var(--dk)}.mc.c-dk .mv{color:var(--dk)}
+.mc.c-sl::after{background:var(--sl)}.mc.c-sl .mv{color:var(--sl)}
+.mc.c-rd::after{background:var(--red)}.mc.c-rd .mv{color:var(--red)}
+
+/* TABLES */
+.tw{overflow-x:auto;border-radius:10px}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:.76rem}
+th{background:var(--dk);color:#fff;padding:9px 10px;text-align:center;font-weight:700;font-size:.65rem;text-transform:uppercase;letter-spacing:.5px}
+th:first-child{border-radius:10px 0 0 0}th:last-child{border-radius:0 10px 0 0}
+td{padding:8px 10px;text-align:center;border-bottom:1px solid var(--bor)}
+tr:nth-child(even){background:#f8fafb}
+tr:hover td{background:var(--tl-s)}
+.tbl-sl th{background:var(--sl)}
+
+/* KPI mini cards */
+.km{background:var(--card);border:1px solid var(--bor);border-radius:10px;padding:10px 14px;min-width:135px;text-align:center;border-left:4px solid var(--sl);transition:.15s}
+.km:hover{transform:translateY(-2px)}
+.km .kt{font-size:.58rem;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.km .kv-row{display:flex;gap:14px;justify-content:center;margin-top:5px}
+.km .kv{font-size:.8rem;font-weight:800}
+.km .kl{font-size:.52rem;color:var(--mut);font-weight:600}
+.km.b-gd{border-left-color:var(--gold)}
+.km.b-tl{border-left-color:var(--tl)}
+.km.b-rd{border-left-color:var(--red)}
+.km.b-sl{border-left-color:var(--sl)}
+
+.cat-tag{font-size:.6rem;font-weight:800;color:#fff;padding:4px 14px;border-radius:20px;display:inline-block;letter-spacing:.5px}
+.krow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
+
+/* STATUS */
+.stb{padding:4px 10px;border-radius:20px;font-size:.6rem;font-weight:800;display:inline-block;letter-spacing:.3px}
+.stb.pend{background:#fef3cd;color:#856404}.stb.done{background:#d4efdf;color:#1e8449}.stb.block{background:#fadbd8;color:#c0392b}
+
+/* SDCA */
+.sdca-box{background:var(--tl-s);border:1px solid rgba(76,196,176,.25);border-radius:12px;padding:16px 20px;margin-bottom:12px}
+.sdca-box h4{font-size:.78rem;font-weight:800;color:var(--sl);margin-bottom:8px}
+.sdca-box p{font-size:.8rem;line-height:1.6}
+
+/* SWOT */
+.swot{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.swot{grid-template-columns:1fr}}
+.sw{border-radius:12px;padding:16px}
+.sw h4{font-size:.76rem;font-weight:800;margin-bottom:8px;letter-spacing:.3px}
+.sw ul{list-style:none;padding:0;font-size:.76rem}
+.sw li{padding:4px 0;border-bottom:1px solid rgba(0,0,0,.04);line-height:1.4}
+.sw li::before{content:'→ ';font-weight:700}
+.sw.s{background:rgba(76,196,176,.1);border:1px solid rgba(76,196,176,.25)}.sw.s h4{color:#1a8a70}
+.sw.w{background:var(--red-s);border:1px solid rgba(231,76,60,.18)}.sw.w h4{color:var(--red)}
+.sw.o{background:var(--sl-s);border:1px solid rgba(25,105,137,.18)}.sw.o h4{color:var(--sl)}
+.sw.t{background:var(--gold-s);border:1px solid rgba(252,208,57,.35)}.sw.t h4{color:#9a7b0a}
+
+/* PARTICIPANTS */
+.parts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.part{display:flex;align-items:center;gap:10px;background:var(--tl-s);padding:10px 14px;border-radius:10px;border:1px solid rgba(76,196,176,.15)}
+.part .av{width:34px;height:34px;border-radius:50%;background:var(--sl);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0}
+.part .pn{font-size:.8rem;font-weight:700}.part .pr{font-size:.66rem;color:var(--mut)}
+
+/* PROBLEM BOX */
+.prob-box{background:linear-gradient(135deg,var(--dk),var(--sl));color:#fff;border-radius:14px;padding:22px 26px}
+.prob-box .hl{color:var(--gold);font-weight:800}
+
+/* OBJ FORMULA */
+.obj-f{background:var(--tl-s);border:1px solid rgba(76,196,176,.2);border-radius:10px;padding:12px 16px;margin-top:10px;font-size:.8rem;font-weight:600;color:var(--sl)}
+
+/* CYCLE VISUAL */
+.cycle-wrap{display:flex;justify-content:center;margin:20px 0}
+.cycle-ring{position:relative;width:320px;height:320px}
+.cycle-q{position:absolute;width:140px;height:140px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:.2s;box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.cycle-q:hover{transform:scale(1.06);box-shadow:0 6px 24px rgba(0,0,0,.18)}
+.cycle-q .cq-num{font-size:1.6rem;font-weight:900;opacity:.3}
+.cycle-q .cq-name{font-size:.9rem;font-weight:800;letter-spacing:.5px}
+.cycle-q .cq-sub{font-size:.6rem;font-weight:600;opacity:.7;margin-top:2px}
+.cq-plan{top:0;left:0;background:linear-gradient(135deg,var(--p-plan),#1d7fa5);color:#fff}
+.cq-do{top:0;right:0;background:linear-gradient(135deg,#3aaa96,var(--p-do));color:var(--dk)}
+.cq-check{bottom:0;right:0;background:linear-gradient(135deg,#d4ab1a,var(--p-check));color:var(--dk)}
+.cq-act{bottom:0;left:0;background:linear-gradient(135deg,var(--p-act),#3a4f66);color:#fff}
+.cycle-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(252,208,57,.4);z-index:2}
+.cycle-center span{font-size:.7rem;font-weight:900;color:var(--dk);text-align:center;line-height:1.2}
+.cycle-arrow{position:absolute;font-size:1.2rem;color:var(--mut);z-index:1}
+.ca-top{top:65px;left:50%;transform:translateX(-50%)}
+.ca-right{top:50%;right:10px;transform:translateY(-50%)}
+.ca-bottom{bottom:65px;left:50%;transform:translateX(-50%)}
+.ca-left{top:50%;left:10px;transform:translateY(-50%)}
+
+/* Gantt */
+.gantt-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--bor);font-size:.76rem}
+.gantt-label{width:200px;font-weight:600;flex-shrink:0;font-size:.72rem}
+.gantt-track{flex:1;height:22px;background:var(--dk-s);border-radius:4px;position:relative;overflow:hidden}
+.gantt-bar{height:100%;border-radius:4px;position:absolute;top:0}
+.gantt-plan-bar{background:rgba(25,105,137,.25)}
+.gantt-actual-bar{background:var(--sl)}
+.gantt-pct{position:absolute;right:6px;top:3px;font-size:.58rem;color:#fff;font-weight:800}
+
+.footer{text-align:center;padding:20px;color:var(--mut);font-size:.66rem;font-weight:500}
+</style>
+</head>
+<body>
+<!-- BOTÓN VOLVER AL PANEL -->
+<div id="backToPanel" style="position:fixed;top:12px;left:12px;z-index:99999;">
+  <a href="#" onclick="history.back(); return false;" style="
+    display:inline-flex;align-items:center;gap:6px;
+    background:linear-gradient(135deg,#232F3D,#196989);
+    color:#FCD039;padding:10px 20px;border-radius:10px;
+    text-decoration:none;font-family:Arial,sans-serif;
+    font-size:13px;font-weight:700;
+    box-shadow:0 4px 15px rgba(0,0,0,0.3);
+    border:1px solid rgba(252,208,57,0.3);
+    transition:all 0.2s;
+  " onmouseover="this.style.background='#FCD039';this.style.color='#232F3D'" 
+     onmouseout="this.style.background='linear-gradient(135deg,#232F3D,#196989)';this.style.color='#FCD039'">
+    ← Volver al Panel
+  </a>
+</div>
+
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <h1>PDCA OTIF — CD AUTOSUR 2026</h1>
+    <span class="badge">T2 LOGÍSTICA</span>
+  </div>
+  <div class="phase-nav">
+    <div class="phase-nav-inner">
+      <div class="pnav-group">
+        <div class="pnav-label" style="color:rgba(255,255,255,.35)"><div class="dot" style="background:var(--gold)"></div>INICIO</div>
+        <button class="pnav-btn active" onclick="go('home',this)">Ciclo PDCA</button>
+      </div>
+      <div class="pnav-sep"></div>
+      <div class="pnav-group">
+        <div class="pnav-label" style="color:rgba(25,105,137,.9)"><div class="dot" style="background:var(--p-plan)"></div>PLAN</div>
+        <button class="pnav-btn" onclick="go('s_problem',this)">Problema</button>
+        <button class="pnav-btn" onclick="go('s_baseline',this)">Línea Base</button>
+        <button class="pnav-btn" onclick="go('s_kpi',this)">KPI Tree</button>
+      </div>
+      <div class="pnav-sep"></div>
+      <div class="pnav-group">
+        <div class="pnav-label" style="color:var(--tl)"><div class="dot" style="background:var(--p-do)"></div>DO</div>
+        <button class="pnav-btn" onclick="go('s_actions',this)">Acciones</button>
+        <button class="pnav-btn" onclick="go('s_exec',this)">Ejecución</button>
+      </div>
+      <div class="pnav-sep"></div>
+      <div class="pnav-group">
+        <div class="pnav-label" style="color:var(--gold)"><div class="dot" style="background:var(--p-check)"></div>CHECK</div>
+        <button class="pnav-btn" onclick="go('s_results',this)">Resultados</button>
+        <button class="pnav-btn" onclick="go('s_disper',this)">Dispersión</button>
+      </div>
+      <div class="pnav-sep"></div>
+      <div class="pnav-group">
+        <div class="pnav-label" style="color:rgba(255,255,255,.5)"><div class="dot" style="background:var(--p-act)"></div>ACT</div>
+        <button class="pnav-btn" onclick="go('s_sdca',this)">SDCA</button>
+        <button class="pnav-btn" onclick="go('s_swot',this)">SWOT</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- HOME: PDCA CYCLE OVERVIEW -->
+<!-- ============================================================ -->
+<div class="sec active" id="home">
+  <div class="card" style="text-align:center;padding:30px;">
+    <div style="font-size:.65rem;color:var(--mut);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Ciclo de Deming — Mejora Continua</div>
+    <div style="font-size:1.3rem;font-weight:900;color:var(--dk);margin-bottom:4px;">PDCA OTIF — CD Autosur</div>
+    <div style="font-size:.82rem;color:var(--mut);font-weight:500;">Indicador OTIF fuera de meta · Objetivo: superar 90% en 2026</div>
+  </div>
+
+  <div class="cycle-wrap">
+    <div class="cycle-ring">
+      <div class="cycle-q cq-plan" onclick="go('s_problem',document.querySelectorAll('.pnav-btn')[1])">
+        <div class="cq-num">01</div><div class="cq-name">PLAN</div><div class="cq-sub">Planificar</div>
+      </div>
+      <div class="cycle-q cq-do" onclick="go('s_actions',document.querySelectorAll('.pnav-btn')[4])">
+        <div class="cq-num">02</div><div class="cq-name">DO</div><div class="cq-sub">Hacer</div>
+      </div>
+      <div class="cycle-q cq-check" onclick="go('s_results',document.querySelectorAll('.pnav-btn')[6])">
+        <div class="cq-num">03</div><div class="cq-name">CHECK</div><div class="cq-sub">Verificar</div>
+      </div>
+      <div class="cycle-q cq-act" onclick="go('s_sdca',document.querySelectorAll('.pnav-btn')[8])">
+        <div class="cq-num">04</div><div class="cq-name">ACT</div><div class="cq-sub">Actuar</div>
+      </div>
+      <div class="cycle-center"><span>MEJORA<br>CONTINUA</span></div>
+      <div class="cycle-arrow ca-top">→</div>
+      <div class="cycle-arrow ca-right">↓</div>
+      <div class="cycle-arrow ca-bottom">←</div>
+      <div class="cycle-arrow ca-left">↑</div>
+    </div>
+  </div>
+
+  <div class="g4" style="margin-top:10px;">
+    <div class="mc c-sl"><div class="ml">Plan</div><div class="mv" style="font-size:1.1rem;">Identificar</div><div class="ms">Problema, Línea base, KPIs, Causas raíz</div></div>
+    <div class="mc c-tl"><div class="ml">Do</div><div class="mv" style="font-size:1.1rem;">Ejecutar</div><div class="ms">Plan de acción, Implementar mejoras</div></div>
+    <div class="mc c-gd"><div class="ml">Check</div><div class="mv" style="font-size:1.1rem;">Verificar</div><div class="ms">Medir resultados, Analizar dispersión</div></div>
+    <div class="mc c-dk"><div class="ml">Act</div><div class="mv" style="font-size:1.1rem;">Estandarizar</div><div class="ms">SDCA, SWOT, Escalar o corregir</div></div>
+  </div>
+
+  <div class="card" style="margin-top:8px;">
+    <div class="card-h">Resumen Ejecutivo</div>
+    <div class="g4">
+      <div class="mc c-rd"><div class="ml">OTIF 2025</div><div class="mv">72.3%</div><div class="ms">Promedio anual</div></div>
+      <div class="mc c-tl"><div class="ml">Meta 2026</div><div class="mv">90.0%</div></div>
+      <div class="mc c-rd"><div class="ml">GAP</div><div class="mv">–17.7pp</div></div>
+      <div class="mc c-gd"><div class="ml">Benchmark</div><div class="mv">93%</div><div class="ms">Mejor CD Cluster</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PLAN: PROBLEM STATEMENT -->
+<!-- ============================================================ -->
+<div class="sec" id="s_problem">
+  <div class="phase-banner plan"><div class="phase-icon">P</div><div class="phase-text"><h2>PLAN — Problem Statement</h2><p>Identificar y definir el problema, establecer objetivos claros y medibles</p></div></div>
+
+  <div class="card"><div class="card-h">Información General</div>
+    <div class="g4">
+      <div><span class="info-label">Planta</span><br><span class="info-value">CD Autosur</span></div>
+      <div><span class="info-label">Área(s)</span><br><span class="info-value">T2 Logística</span></div>
+      <div><span class="info-label">Fecha inicio</span><br><span class="info-value">Enero 2026</span></div>
+      <div><span class="info-label">Responsable</span><br><span class="info-value">Coord. CD Autosur</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div class="prob-box">
+      <div class="card-h" style="color:var(--gold)">Descripción del Problema</div>
+      <p style="font-size:.88rem;font-weight:600;line-height:1.7;">Indicador <span class="hl">OTIF fuera de meta</span> en 2026 — CD Autosur registró un promedio de <span class="hl">72.3%</span> en 2025 con caída severa en el segundo semestre (Julio: <span class="hl">41.5%</span>). Se requiere plan de acción para alcanzar la meta de <span class="hl">90%</span>.</p>
+    </div>
+  </div>
+
+  <div class="card"><div class="card-h">Objetivo y Método de Cálculo</div>
+    <div class="g4" style="margin-bottom:12px;">
+      <div><span class="info-label">Objetivo</span><br><span class="info-value">OTIF > 90%</span></div>
+      <div><span class="info-label">KPI</span><br><span class="info-value">OTIF</span></div>
+      <div><span class="info-label">PIs</span><br><span class="info-value">On Time, In Full, Rechazos, Stock Out</span></div>
+    </div>
+    <div class="obj-f"><strong>Fórmula:</strong> (Vol. Entregado / Vol. Solicitado) × (Vol. Entregado a Tiempo / Vol. Entregado)</div>
+    <div class="g4" style="margin-top:14px;">
+      <div class="mc c-rd"><div class="ml">FROM</div><div class="mv">72.3%</div><div class="ms">OTIF Prom 2025</div></div>
+      <div class="mc c-tl"><div class="ml">TO</div><div class="mv">90.0%</div><div class="ms">Meta 2026</div></div>
+      <div class="mc c-dk"><div class="ml">BY</div><div class="mv">Dic 2026</div></div>
+      <div class="mc c-gd"><div class="ml">Benchmark</div><div class="mv">93%</div></div>
+    </div>
+  </div>
+
+  <div class="card"><div class="card-h">Equipo de Trabajo</div>
+    <div class="parts">
+      <div class="part"><div class="av">CL</div><div><div class="pn">Coord. Logístico</div><div class="pr">Responsable</div></div></div>
+      <div class="part"><div class="av">JO</div><div><div class="pn">Jefe Operaciones</div><div class="pr">Facilitador / Líder</div></div></div>
+      <div class="part"><div class="av">CT</div><div><div class="pn">Coord. Transporte</div><div class="pr">Participante</div></div></div>
+      <div class="part"><div class="av">CA</div><div><div class="pn">Coord. Almacén</div><div class="pr">Participante</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PLAN: BASELINE -->
+<!-- ============================================================ -->
+<div class="sec" id="s_baseline">
+  <div class="phase-banner plan"><div class="phase-icon">P</div><div class="phase-text"><h2>PLAN — Línea Base 2025</h2><p>Analizar el comportamiento histórico para identificar patrones y oportunidades</p></div></div>
+
+  <div class="card"><div class="card-h">OTIF DC 2025 vs Objetivo 2026</div>
+    <div class="tw"><table><thead><tr><th>Mes</th><th>Obj 2026</th><th>Real 2025</th><th>GAP</th></tr></thead><tbody id="tPrev"></tbody>
+    <tfoot><tr style="background:var(--dk);color:#fff;font-weight:700"><td>Promedio</td><td id="pO"></td><td id="pR"></td><td id="pG"></td></tr></tfoot></table></div>
+  </div>
+
+  <div class="g2">
+    <div class="card"><div class="card-h">OTIF 2025 — Tendencia</div><div class="chart-container"><canvas id="c1"></canvas></div></div>
+    <div class="card"><div class="card-h">On Time vs In Full 2025</div><div class="chart-container"><canvas id="c2"></canvas></div></div>
+  </div>
+
+  <div class="card"><div class="card-h">Componentes de Pérdida 2025 (khl)</div>
+    <div class="tw"><table class="tbl-sl"><thead><tr><th>Mes</th><th>Vol. Ordenado</th><th>Vol. Entregado</th><th>Stock Out</th><th>Refusal</th><th>Issue Log.</th><th>Issue Créd.</th></tr></thead><tbody id="tLoss"></tbody></table></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PLAN: KPI TREE -->
+<!-- ============================================================ -->
+<div class="sec" id="s_kpi">
+  <div class="phase-banner plan"><div class="phase-icon">P</div><div class="phase-text"><h2>PLAN — KPI Tree</h2><p>Descomposición del OTIF en indicadores de proceso para identificar causas raíz</p></div></div>
+
+  <div class="card">
+    <div class="card-h">Árbol de Indicadores OTIF</div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="display:inline-block;background:linear-gradient(135deg,var(--dk),var(--sl));color:#fff;border-radius:14px;padding:20px 44px;border:3px solid var(--gold);box-shadow:0 6px 24px rgba(35,47,61,.2)">
+        <div style="font-size:.6rem;color:var(--gold);font-weight:800;letter-spacing:1.2px">OTIF (%)</div>
+        <div style="font-size:2.1rem;font-weight:900">72.3%</div>
+        <div style="font-size:.68rem;opacity:.7">Sueño: 90.0% | Acum 2025</div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:50px;margin-bottom:24px;flex-wrap:wrap;">
+      <div style="text-align:center"><div style="width:3px;height:20px;background:var(--gold);margin:0 auto 8px;border-radius:2px"></div>
+        <div class="km b-rd" style="min-width:190px"><div class="kt">ON TIME (%)</div><div class="kv-row"><div><div class="kv" style="color:var(--red)">87.0%</div><div class="kl">ACTUAL</div></div><div><div class="kv" style="color:var(--tl)">93%</div><div class="kl">SUEÑO</div></div></div><div style="font-size:.55rem;color:var(--mut);margin-top:3px">Impacto: 0.76</div></div></div>
+      <div style="text-align:center"><div style="width:3px;height:20px;background:var(--gold);margin:0 auto 8px;border-radius:2px"></div>
+        <div class="km b-gd" style="min-width:190px"><div class="kt">IN FULL (%)</div><div class="kv-row"><div><div class="kv" style="color:var(--org)">94.3%</div><div class="kl">ACTUAL</div></div><div><div class="kv" style="color:var(--tl)">96%</div><div class="kl">SUEÑO</div></div></div><div style="font-size:.55rem;color:var(--mut);margin-top:3px">Impacto: 0.24</div></div></div>
+    </div>
+    <div style="text-align:center;margin-bottom:10px"><span class="cat-tag" style="background:var(--sl)">GESTIÓN</span></div>
+    <div class="krow">
+      <div class="km b-rd"><div class="kt">Refusal (%)</div><div class="kv-row"><div><div class="kv">2.8%</div><div class="kl">ACT</div></div><div><div class="kv" style="color:var(--tl)">1.8%</div><div class="kl">SUEÑO</div></div></div></div>
+      <div class="km b-gd"><div class="kt">Stock Out (%)</div><div class="kv-row"><div><div class="kv">1.9%</div><div class="kl">ACT</div></div><div><div class="kv" style="color:var(--tl)">1.5%</div><div class="kl">SUEÑO</div></div></div></div>
+      <div class="km b-tl"><div class="kt">No Plan (%)</div><div class="kv-row"><div><div class="kv">0.5%</div><div class="kl">ACT</div></div><div><div class="kv" style="color:var(--tl)">0.7%</div><div class="kl">SUEÑO</div></div></div></div>
+      <div class="km b-rd"><div class="kt">Cliente Cerrado</div><div class="kv-row"><div><div class="kv">3.4%</div><div class="kl">ACT</div></div><div><div class="kv" style="color:var(--tl)">3.0%</div><div class="kl">SUEÑO</div></div></div></div>
+    </div>
+    <div style="text-align:center;margin-bottom:10px"><span class="cat-tag" style="background:var(--tl);color:var(--dk)">OPERACIONAL</span></div>
+    <div class="krow">
+      <div class="km b-tl"><div class="kt">Sales Curve</div><div class="kv-row"><div><div class="kv">18.6%</div><div class="kl">LY</div></div><div><div class="kv" style="color:var(--tl)">20.2%</div><div class="kl">AC</div></div></div></div>
+      <div class="km b-tl"><div class="kt">WH Prod (hl/h)</div><div class="kv-row"><div><div class="kv">6.56</div><div class="kl">LY</div></div><div><div class="kv" style="color:var(--tl)">7.18</div><div class="kl">AC</div></div></div></div>
+      <div class="km b-gd"><div class="kt">Cap. Occ (pck/T)</div><div class="kv-row"><div><div class="kv">846</div><div class="kl">LY</div></div><div><div class="kv" style="color:var(--tl)">863</div><div class="kl">AC</div></div></div></div>
+      <div class="km b-tl"><div class="kt">Transp Prod (pck/h)</div><div class="kv-row"><div><div class="kv">49.0</div><div class="kl">LY</div></div><div><div class="kv" style="color:var(--tl)">56.7</div><div class="kl">AC</div></div></div></div>
+    </div>
+    <div class="krow">
+      <div class="km b-gd"><div class="kt">Avg Drop Size</div><div class="kv-row"><div><div class="kv">51.6</div><div class="kl">LY</div></div><div><div class="kv" style="color:var(--tl)">56.4</div><div class="kl">AC</div></div></div></div>
+      <div class="km b-tl"><div class="kt">Avg Distance (km)</div><div class="kv-row"><div><div class="kv">27.7</div><div class="kl">LY</div></div><div><div class="kv" style="color:var(--tl)">27.0</div><div class="kl">AC</div></div></div></div>
+      <div class="km b-sl"><div class="kt">WH Quality (ppm)</div><div class="kv-row"><div><div class="kv">44.8</div><div class="kl">LY</div></div><div><div class="kv" style="color:var(--tl)">43.7</div><div class="kl">AC</div></div></div></div>
+      <div class="km b-tl"><div class="kt">Del Quality (ppm)</div><div class="kv-row"><div><div class="kv">39.2</div><div class="kl">LY</div></div><div><div class="kv" style="color:var(--tl)">27.8</div><div class="kl">AC</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DO: ACTION PLAN -->
+<!-- ============================================================ -->
+<div class="sec" id="s_actions">
+  <div class="phase-banner do"><div class="phase-icon">D</div><div class="phase-text"><h2>DO — Plan de Acción</h2><p>Definir e implementar las acciones correctivas y preventivas para cerrar el GAP</p></div></div>
+
+  <div class="card"><div class="card-h">Acciones Correctivas y Preventivas</div>
+    <div class="tw"><table><thead><tr><th>#</th><th>Origen</th><th>¿Qué?</th><th>¿Quién?</th><th>¿Cómo?</th><th>Semanas</th><th>Estatus</th><th>Indicador</th><th>SDCA</th></tr></thead><tbody>
+      <tr><td>1</td><td>Causa Raíz</td><td style="text-align:left">Reducir Stock Out mejorando forecast accuracy</td><td>Coord. Log.</td><td style="text-align:left">Reuniones semanales con comercial para ajuste forecast por SKU</td><td>S7–S52</td><td><span class="stb pend">En curso</span></td><td>SO% &lt; 1.5%</td><td>S</td></tr>
+      <tr><td>2</td><td>Causa Raíz</td><td style="text-align:left">Disminuir Refusal con control despacho</td><td>Coord. Tr.</td><td style="text-align:left">Checklist despacho + llamada previa al cliente</td><td>S7–S30</td><td><span class="stb pend">En curso</span></td><td>Ref% &lt; 1.8%</td><td>S</td></tr>
+      <tr><td>3</td><td>GOP</td><td style="text-align:left">Mejorar eficiencia modulación y adherencia dimensionamiento</td><td>Jefe Ops.</td><td style="text-align:left">Optimización de rutas con herramienta de ruteo</td><td>S10–S40</td><td><span class="stb pend">En curso</span></td><td>Efic. &gt; 95%</td><td>D</td></tr>
+      <tr><td>4</td><td>GOP</td><td style="text-align:left">Reducir errores alistamiento y mejorar picking</td><td>Coord. Alm.</td><td style="text-align:left">Capacitación, doble verificación, señalización</td><td>S8–S26</td><td><span class="stb pend">En curso</span></td><td>Err &lt; 5 ppm</td><td>S</td></tr>
+      <tr><td>5</td><td>Análisis</td><td style="text-align:left">Mejorar On Time: control salida camiones 6AM</td><td>Coord. Tr.</td><td style="text-align:left">KPI diario eficiencia cargue 6AM</td><td>S7–S52</td><td><span class="stb pend">En curso</span></td><td>Cargue &gt; 96.5%</td><td>C</td></tr>
+      <tr><td>6</td><td>Análisis</td><td style="text-align:left">Mantener disponibilidad flota y reducir pernoctas</td><td>Coord. Tr.</td><td style="text-align:left">Plan mto preventivo, control pernoctas</td><td>S10–S52</td><td><span class="stb pend">En curso</span></td><td>Fleet &gt; 94%</td><td>C</td></tr>
+    </tbody></table></div>
+  </div>
+
+  <div class="card"><div class="card-h">Diagrama de Gantt — Seguimiento de Acciones</div>
+    <div id="ganttArea"></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DO: EXECUTION -->
+<!-- ============================================================ -->
+<div class="sec" id="s_exec">
+  <div class="phase-banner do"><div class="phase-icon">D</div><div class="phase-text"><h2>DO — Ejecución 2026</h2><p>Seguimiento a los KPIs operacionales durante la implementación del plan</p></div></div>
+
+  <div class="card"><div class="card-h">KPIs Operacionales Ene–May 2026</div>
+    <div class="tw"><table><thead><tr><th>KPI</th><th>UOM</th><th>Ene AC</th><th>Ene LY</th><th>Feb AC</th><th>Feb LY</th><th>Mar AC</th><th>Mar LY</th><th>Abr AC</th><th>Abr LY</th><th>May AC</th><th>May LY</th></tr></thead><tbody id="tCur"></tbody></table></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="card-h">Volumen 2026 (AC vs LY)</div><div class="chart-container"><canvas id="c3"></canvas></div></div>
+    <div class="card"><div class="card-h">Sales Curve Index 2026</div><div class="chart-container"><canvas id="c4"></canvas></div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="card-h">Productividad Almacén (hl/h)</div><div class="chart-container"><canvas id="c5"></canvas></div></div>
+    <div class="card"><div class="card-h">Índice de Calidad (ppm)</div><div class="chart-container"><canvas id="c6"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- CHECK: RESULTS -->
+<!-- ============================================================ -->
+<div class="sec" id="s_results">
+  <div class="phase-banner check"><div class="phase-icon">C</div><div class="phase-text"><h2>CHECK — Results Check</h2><p>Comparar resultados contra el objetivo para validar efectividad de las acciones</p></div></div>
+
+  <div class="card"><div class="card-h">OTIF DC Autosur 2025 (DC-K8115)</div><div class="chart-container"><canvas id="c7"></canvas></div></div>
+  <div class="g4">
+    <div class="mc c-rd"><div class="ml">OTIF Acum 2025</div><div class="mv">72.3%</div><div class="ms">Promedio 12 meses</div></div>
+    <div class="mc c-tl"><div class="ml">Objetivo 2026</div><div class="mv">90.0%</div></div>
+    <div class="mc c-rd"><div class="ml">GAP</div><div class="mv">–17.7pp</div></div>
+    <div class="mc c-gd"><div class="ml">Mejor Mes</div><div class="mv">100%</div><div class="ms">Ene–Mar, May</div></div>
+  </div>
+  <div class="card"><div class="card-h">Detalle Mensual OTIF DC — 2025</div>
+    <div class="tw"><table><thead><tr><th>Mes</th><th>OTIF DC (%)</th><th>Objetivo</th><th>Cumple</th></tr></thead><tbody id="tRes"></tbody></table></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- CHECK: DISPERSION -->
+<!-- ============================================================ -->
+<div class="sec" id="s_disper">
+  <div class="phase-banner check"><div class="phase-icon">C</div><div class="phase-text"><h2>CHECK — Análisis de Dispersión</h2><p>Identificar correlaciones entre variables de proceso y el resultado OTIF</p></div></div>
+  <div class="g2">
+    <div class="card"><div class="card-h">Refusal (khl) vs On Time %</div><div class="chart-container"><canvas id="c8"></canvas></div></div>
+    <div class="card"><div class="card-h">Stock Out (khl) vs In Full %</div><div class="chart-container"><canvas id="c9"></canvas></div></div>
+  </div>
+  <div class="card"><div class="card-h">Volumen Ordenado (khl) vs OTIF DC %</div><div class="chart-container"><canvas id="c10"></canvas></div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ACT: SDCA -->
+<!-- ============================================================ -->
+<div class="sec" id="s_sdca">
+  <div class="phase-banner act"><div class="phase-icon">A</div><div class="phase-text"><h2>ACT — Estandarización (SDCA)</h2><p>Estandarizar las acciones exitosas para sostener la mejora en el tiempo</p></div></div>
+
+  <div class="card"><div class="card-h">Ciclo SDCA — Estandarizar, Hacer, Verificar, Actuar</div>
+    <div class="g2" style="margin-bottom:16px;">
+      <div class="sdca-box"><h4>S — Estandarizar</h4><p>Documentar los nuevos estándares de operación derivados de las acciones exitosas del plan de mejora OTIF: checklist de despacho, protocolo de llamada previa al cliente, frecuencia de reuniones forecast y procedimiento de verificación picking.</p></div>
+      <div class="sdca-box"><h4>D — Hacer</h4><p>Capacitar al 100% del personal operativo en los nuevos estándares. Cronograma de capacitación mensual con evaluación de comprensión y seguimiento en campo.</p></div>
+    </div>
+    <div class="g2">
+      <div class="sdca-box"><h4>C — Verificar</h4><p>Monitoreo semanal del cumplimiento de estándares mediante auditorías internas, revisión de KPIs (Refusal, Stock Out, On Time, Errores Alistamiento) y alertas automáticas cuando un indicador sale de rango.</p></div>
+      <div class="sdca-box"><h4>A — Actuar</h4><p>Si los indicadores se desvían: activar protocolo de escalamiento. Si se mantienen: documentar lecciones aprendidas y replicar best practices en otros CDs del cluster.</p></div>
+    </div>
+  </div>
+
+  <div class="card"><div class="card-h">Plan de Estandarización</div>
+    <div class="tw"><table><thead><tr><th>Acción</th><th>Estándar/WD</th><th>Dueño</th><th>Capacitador</th><th>Personal</th><th>Fecha</th><th>Estatus</th></tr></thead><tbody>
+      <tr><td style="text-align:left">Checklist de despacho obligatorio</td><td>WD-LOG-001</td><td>Coord. Transp.</td><td>Jefe Ops.</td><td>Auxiliares despacho</td><td>S10</td><td><span class="stb pend">En curso</span></td></tr>
+      <tr><td style="text-align:left">Protocolo llamada previa al cliente</td><td>WD-LOG-002</td><td>Coord. Transp.</td><td>Coord. Log.</td><td>Conductores</td><td>S12</td><td><span class="stb pend">En curso</span></td></tr>
+      <tr><td style="text-align:left">Reunión semanal forecast con comercial</td><td>WD-PLN-001</td><td>Coord. Log.</td><td>Jefe Ops.</td><td>Planificadores</td><td>S8</td><td><span class="stb done">Completado</span></td></tr>
+      <tr><td style="text-align:left">Doble verificación picking</td><td>WD-ALM-001</td><td>Coord. Almacén</td><td>Coord. Almacén</td><td>Pickers, checkers</td><td>S9</td><td><span class="stb pend">En curso</span></td></tr>
+      <tr><td style="text-align:left">Control eficiencia cargue 6AM</td><td>WD-TRN-001</td><td>Coord. Transp.</td><td>Coord. Transp.</td><td>Supervisores</td><td>S7</td><td><span class="stb done">Completado</span></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ACT: SWOT -->
+<!-- ============================================================ -->
+<div class="sec" id="s_swot">
+  <div class="phase-banner act"><div class="phase-icon">A</div><div class="phase-text"><h2>ACT — Análisis SWOT</h2><p>Evaluar factores internos y externos para la sostenibilidad de la mejora</p></div></div>
+  <div class="card"><div class="card-h">SWOT — Mejora del OTIF en CD Autosur</div>
+    <div class="swot">
+      <div class="sw s"><h4>FORTALEZAS</h4><ul>
+        <li>Volumen AC 2026 supera LY en todos los meses</li>
+        <li>Productividad almacén en mejora (7.18 vs 6.56 hl/h)</li>
+        <li>Calidad de entrega mejorada (27.8 vs 39.2 ppm)</li>
+        <li>Productividad transporte +15.6% vs LY</li>
+        <li>Reducción de pérdidas de producto terminado</li>
+      </ul></div>
+      <div class="sw w"><h4>DEBILIDADES</h4><ul>
+        <li>OTIF 2S-2025 con caída severa (Jul: 41.5%, Sep: 58.7%)</li>
+        <li>Refusal sostenido alto (2.5–5.9 khl/mes)</li>
+        <li>Stock Out elevado en alta demanda (Jul, Sep–Dic)</li>
+        <li>Alta variabilidad mensual en On Time</li>
+        <li>Sales Curve Index debajo de BU en algunos meses</li>
+      </ul></div>
+      <div class="sw o"><h4>OPORTUNIDADES</h4><ul>
+        <li>Herramienta de ruteo para optimizar entregas</li>
+        <li>Alineación forecast comercial–logística</li>
+        <li>Capacity occupation creciente mejora eficiencia</li>
+        <li>Benchmark cluster &gt;93% OTIF como referencia</li>
+        <li>Drop size creciente optimiza rutas</li>
+      </ul></div>
+      <div class="sw t"><h4>AMENAZAS</h4><ul>
+        <li>Estacionalidad impacta OTIF en alta demanda</li>
+        <li>Clima afecta accesibilidad de rutas</li>
+        <li>Presión de costos limita inversión en flota</li>
+        <li>Turnover logístico en aumento</li>
+        <li>Problemas de crédito generan cancelaciones</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div class="card"><div class="card-h">Plan de Respuesta a Riesgos</div>
+    <div class="tw"><table><thead><tr><th>#</th><th>Riesgo</th><th>Estrategia</th><th>Acción</th><th>Responsable</th><th>Frecuencia</th></tr></thead><tbody>
+      <tr><td>1</td><td style="text-align:left">Picos de demanda causan Stock Out</td><td>Mitigar</td><td style="text-align:left">Buffer de seguridad en SKUs top 20 durante meses pico</td><td>Coord. Log.</td><td>Mensual</td></tr>
+      <tr><td>2</td><td style="text-align:left">Rotación de personal pierde know-how</td><td>Mitigar</td><td style="text-align:left">Documentación de procesos + on-boarding acelerado</td><td>Jefe Ops.</td><td>Continuo</td></tr>
+      <tr><td>3</td><td style="text-align:left">Fallas mecánicas impactan On Time</td><td>Eliminar</td><td style="text-align:left">Plan de mantenimiento preventivo semanal</td><td>Coord. Transp.</td><td>Semanal</td></tr>
+      <tr><td>4</td><td style="text-align:left">Clientes sin crédito generan cancelaciones</td><td>Mitigar</td><td style="text-align:left">Alerta temprana de cartera con comercial</td><td>Coord. Log.</td><td>Semanal</td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<div class="footer">PDCA OTIF — CD Autosur 2026 | Ciclo de Deming | T2 Logística | Datos: Anaplan Cluster 6 LY & Anaplan SL</div>
+
+<script>
+Chart.register(ChartDataLabels);
+function go(id,btn){document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.pnav-btn').forEach(b=>b.classList.remove('active'));document.getElementById(id).classList.add('active');btn.classList.add('active');window.scrollTo(0,0)}
+
+const M=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const ot25=[1,1,1,.7874,1,.77,.4154,.6966,.5875,.7171,.6881,.612];
+const otL=[3.48,4.58,4.17,6.82,5.99,11.84,33.99,10.92,17.56,6.92,12.72,17.36];
+const otP=otL.map(v=>100-v);
+const ifL=[5.09,5.58,4.18,4.22,3.82,3.97,7.51,6.26,6.74,6.53,6.06,6.79];
+const ifP=ifL.map(v=>100-v);
+const vO=[115.9,114.58,121.64,127.31,138.09,142.57,148.55,144.34,132.79,135.36,140.22,157.56];
+const vD=[110.63,108.91,117.18,122.57,133.66,137.83,137.96,136.02,124.72,127.14,132.4,147.98];
+const so=[2.24,1.84,1.48,1.23,.93,.9,4.26,3.69,3.83,3.72,2.61,5.08];
+const rf=[2.59,2.47,3.46,3.4,3.41,4.46,6.24,4.46,4.82,4.28,4.77,4.98];
+const lI=[.06,.05,0,0,.16,.07,.03,.23,.21,.15,.34,.09];
+const cI=[.05,0,0,0,0,0,.18,0,.01,.1,0,0];
+const OBJ=.9;
+
+// COLORS
+const C={gd:'#FCD039',gda:'rgba(252,208,57,.6)',gds:'rgba(252,208,57,.15)',dk:'#232F3D',dka:'rgba(35,47,61,.7)',dks:'rgba(35,47,61,.12)',sl:'#196989',sla:'rgba(25,105,137,.7)',sls:'rgba(25,105,137,.12)',tl:'#4CC4B0',tla:'rgba(76,196,176,.7)',tls:'rgba(76,196,176,.12)',rd:'#e74c3c',rda:'rgba(231,76,60,.6)'};
+const NG={grid:{display:false},border:{display:false}};
+const DLoff={datalabels:{display:false}};
+const DL=(c,f)=>({datalabels:{display:true,color:c||C.dk,font:{weight:700,size:10},formatter:f||(v=>v),anchor:'end',align:'top',offset:2}});
+
+// ====== TABLES ======
+const t1=document.getElementById('tPrev');let sO=0,sR=0;
+for(let i=0;i<12;i++){const r=ot25[i],g=(r-OBJ)*100;sO+=OBJ;sR+=r;t1.innerHTML+=`<tr><td><strong>${M[i]}</strong></td><td>${(OBJ*100).toFixed(1)}%</td><td style="font-weight:800;color:${r>=OBJ?C.tl:C.rd}">${(r*100).toFixed(1)}%</td><td style="font-weight:700;color:${g>=0?C.tl:C.rd}">${g>=0?'+':''}${g.toFixed(1)}pp</td></tr>`}
+document.getElementById('pO').textContent=(sO/12*100).toFixed(1)+'%';document.getElementById('pR').textContent=(sR/12*100).toFixed(1)+'%';
+const aG=((sR/12-sO/12)*100);document.getElementById('pG').textContent=(aG>=0?'+':'')+aG.toFixed(1)+'pp';
+
+const t2=document.getElementById('tLoss');
+for(let i=0;i<12;i++){t2.innerHTML+=`<tr><td><strong>${M[i]}</strong></td><td>${vO[i].toFixed(1)}</td><td>${vD[i].toFixed(1)}</td><td style="color:${C.rd};font-weight:700">${so[i].toFixed(2)}</td><td style="color:${C.gd.replace('#','')=='FCD039'?'#c9940f':C.gd};font-weight:700">${rf[i].toFixed(2)}</td><td>${lI[i].toFixed(2)}</td><td>${cI[i].toFixed(2)}</td></tr>`}
+
+const kd={vol:{n:'Volumen',u:'hl',a:[109751,99717,116422,119121,127974],l:[99737,93889,105921,110738,126102]},sci:{n:'Sales Curve',u:'%',a:[20.2,16.29,18.11,22.34,16.08],l:[18.6,24.5,25.96,19.36,19.04]},whP:{n:'WH Productivity',u:'hl/h',a:[7.18,6.71,8.08,7.93,7.92],l:[6.56,6.66,7.69,8.07,8.49]},cap:{n:'Capacity Occ.',u:'pck/T',a:[863,824,770,892,892],l:[846,821,850,834,834]},drp:{n:'Avg Drop Size',u:'pck',a:[56.36,51.86,48.64,61.94,61.5],l:[51.56,47.82,51.62,52.13,52.46]},dst:{n:'Avg Distance',u:'km',a:[27.02,27.5,27.09,26,25.06],l:[27.7,27.54,27.11,27.29,26.39]},trP:{n:'Transport Prod.',u:'pck/h',a:[56.66,53.5,53.5,68.65,67.8],l:[49.03,57.63,62.78,64.46,57.63]},whQ:{n:'WH Quality',u:'ppm',a:[43.69,40.28,17.13,51.98,13.25],l:[44.85,47.96,15.77,37.84,17.58]},dlQ:{n:'Del Quality',u:'ppm',a:[27.79,18.96,38.79,49.63,30.55],l:[39.22,25.04,4.43,51.35,4.47]},fgl:{n:'FG Loss',u:'ppm',a:[2086,1412,649,652,676],l:[2197,2264,3492,5826,1718]}};
+
+const t3=document.getElementById('tCur');
+Object.values(kd).forEach(d=>{let r=`<tr><td style="text-align:left;font-weight:700">${d.n}</td><td>${d.u}</td>`;
+  for(let i=0;i<5;i++){const a=d.a[i],l=d.l[i],ok=d.u==='ppm'?a<=l:a>=l;const fA=a>1000?Math.round(a).toLocaleString():a.toFixed?a.toFixed(1):a;const fL=l>1000?Math.round(l).toLocaleString():l.toFixed?l.toFixed(1):l;
+    r+=`<td style="font-weight:800;color:${ok?C.tl:C.rd}">${fA}</td><td style="color:#6b7a8d">${fL}</td>`}t3.innerHTML+=r+'</tr>'});
+
+const t4=document.getElementById('tRes');
+ot25.forEach((v,i)=>{const p=(v*100).toFixed(1),ok=v>=OBJ;t4.innerHTML+=`<tr><td><strong>${M[i]}</strong></td><td style="font-weight:800;color:${ok?C.tl:C.rd}">${p}%</td><td>90.0%</td><td>${ok?`<span style="color:${C.tl};font-weight:900;font-size:1.1rem">✓</span>`:`<span style="color:${C.rd};font-weight:900;font-size:1.1rem">✗</span>`}</td></tr>`});
+
+// ====== GANTT ======
+const ganttData=[
+  {n:'Reducir Stock Out (forecast)',s:7,e:52,pct:35},{n:'Disminuir Refusal (despacho)',s:7,e:30,pct:45},
+  {n:'Eficiencia modulación (ruteo)',s:10,e:40,pct:25},{n:'Errores alistamiento (picking)',s:8,e:26,pct:50},
+  {n:'On Time (control cargue 6AM)',s:7,e:52,pct:40},{n:'Disponibilidad flota (mto prev)',s:10,e:52,pct:30}
+];
+const gA=document.getElementById('ganttArea');
+ganttData.forEach(g=>{const total=52;const planW=((g.e-g.s)/total*100);const startW=((g.s-1)/total*100);const actW=planW*(g.pct/100);
+  gA.innerHTML+=`<div class="gantt-row"><div class="gantt-label">${g.n}</div><div class="gantt-track"><div class="gantt-bar gantt-plan-bar" style="left:${startW}%;width:${planW}%"></div><div class="gantt-bar gantt-actual-bar" style="left:${startW}%;width:${actW}%"><span class="gantt-pct">${g.pct}%</span></div></div></div>`});
+
+// ====== CHARTS ======
+// c1: OTIF trend
+new Chart(document.getElementById('c1'),{type:'line',data:{labels:M,datasets:[
+  {label:'OTIF 2025 DC',data:ot25.map(v=>+(v*100).toFixed(1)),borderColor:C.sl,backgroundColor:C.sls,fill:true,tension:.35,pointRadius:5,pointBackgroundColor:ot25.map(v=>v>=.9?C.tl:C.rd),borderWidth:2.5,...DL(C.dk,v=>v+'%')},
+  {label:'Obj 90%',data:Array(12).fill(90),borderColor:C.gd,borderDash:[8,4],borderWidth:2.5,pointRadius:0,...DLoff}
+]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:11,weight:600},usePointStyle:true}}},scales:{x:NG,y:{...NG,min:30,max:110,ticks:{callback:v=>v+'%',font:{size:10}}}}}});
+
+// c2: OT vs IF
+new Chart(document.getElementById('c2'),{type:'bar',data:{labels:M,datasets:[
+  {label:'On Time %',data:otP.map(v=>+v.toFixed(1)),backgroundColor:C.sla,borderRadius:5,borderSkipped:false,...DL('#fff',v=>v.toFixed(0)+'%')},
+  {label:'In Full %',data:ifP.map(v=>+v.toFixed(1)),backgroundColor:C.gda,borderRadius:5,borderSkipped:false,...DL(C.dk,v=>v.toFixed(0)+'%')}
+]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:11,weight:600},usePointStyle:true}}},scales:{x:NG,y:{...NG,min:60,max:100,ticks:{callback:v=>v+'%',font:{size:10}}}}}});
+
+// c3: Volume
+new Chart(document.getElementById('c3'),{type:'bar',data:{labels:M.slice(0,5),datasets:[
+  {label:'AC 2026',data:kd.vol.a,backgroundColor:C.tla,borderRadius:6,borderSkipped:false,...DL(C.dk,v=>(v/1000).toFixed(0)+'k')},
+  {label:'LY 2025',data:kd.vol.l,backgroundColor:C.dks,borderRadius:6,borderSkipped:false,...DLoff}
+]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:11,weight:600},usePointStyle:true}}},scales:{x:NG,y:{...NG,ticks:{callback:v=>(v/1000).toFixed(0)+'k',font:{size:10}}}}}});
+
+// c4: SCI
+new Chart(document.getElementById('c4'),{type:'line',data:{labels:M.slice(0,5),datasets:[
+  {label:'AC 2026',data:kd.sci.a,borderColor:C.sl,backgroundColor:C.sls,fill:true,tension:.35,borderWidth:2.5,pointRadius:5,pointBackgroundColor:C.sl,...DL(C.dk,v=>v.toFixed(1)+'%')},
+  {label:'LY 2025',data:kd.sci.l,borderColor:C.gd,tension:.35,borderWidth:2.5,borderDash:[6,3],pointRadius:5,pointBackgroundColor:C.gd,...DL('#888',v=>v.toFixed(1)+'%')}
+]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:11,weight:600},usePointStyle:true}}},scales:{x:NG,y:{...NG,ticks:{callback:v=>v+'%',font:{size:10}}}}}});
+
+// c5: WH Prod
+new Chart(document.getElementById('c5'),{type:'line',data:{labels:M.slice(0,5),datasets:[
+  {label:'AC 2026',data:kd.whP.a,borderColor:C.tl,backgroundColor:C.tls,fill:true,tension:.35,borderWidth:2.5,pointRadius:5,pointBackgroundColor:C.tl,...DL(C.dk,v=>v.toFixed(2))},
+  {label:'LY 2025',data:kd.whP.l,borderColor:C.dk,tension:.35,borderWidth:2,borderDash:[6,3],pointRadius:4,pointBackgroundColor:C.dk,...DL('#888',v=>v.toFixed(2))}
+]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:11,weight:600},usePointStyle:true}}},scales:{x:NG,y:{...NG,ticks:{font:{size:10}}}}}});
+
+// c6: Quality
+new Chart(document.getElementById('c6'),{type:'bar',data:{labels:M.slice(0,5),datasets:[
+  {label:'WH Quality AC',data:kd.whQ.a,backgroundColor:C.sla,borderRadius:5,borderSkipped:false,...DL('#fff',v=>v.toFixed(0))},
+  {label:'Del Quality AC',data:kd.dlQ.a,backgroundColor:C.gda,borderRadius:5,borderSkipped:false,...DL(C.dk,v=>v.toFixed(0))},
+  {label:'WH Quality LY',data:kd.whQ.l,backgroundColor:C.dks,borderRadius:5,borderSkipped:false,...DLoff},
+  {label:'Del Quality LY',data:kd.dlQ.l,backgroundColor:C.gds,borderRadius:5,borderSkipped:false,...DLoff}
+]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:10,weight:600},usePointStyle:true}}},scales:{x:NG,y:{...NG,title:{display:true,text:'ppm',font:{size:10}}}}}});
+
+// c7: Results
+new Chart(document.getElementById('c7'),{type:'bar',data:{labels:M,datasets:[
+  {label:'OTIF DC 2025',data:ot25.map(v=>+(v*100).toFixed(1)),backgroundColor:ot25.map(v=>v>=.9?C.tla:C.rda),borderRadius:6,borderSkipped:false,datalabels:{display:true,color:C.dk,font:{weight:800,size:10},formatter:v=>v+'%',anchor:'end',align:'top',offset:2}},
+  {label:'Obj 90%',data:Array(12).fill(90),type:'line',borderColor:C.gd,borderDash:[8,4],borderWidth:2.5,pointRadius:0,...DLoff}
+]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:11,weight:600},usePointStyle:true}}},scales:{x:NG,y:{...NG,min:0,max:115,ticks:{callback:v=>v+'%',font:{size:10}}}}}});
+
+// Scatter charts
+const scOpt=(xT,yT,yMin)=>({responsive:true,plugins:{legend:{display:false}},scales:{x:{...NG,title:{display:true,text:xT,font:{size:11,weight:600}}},y:{...NG,title:{display:true,text:yT,font:{size:11,weight:600}},min:yMin}}});
+const scDL={datalabels:{display:true,color:C.dk,font:{weight:700,size:9},formatter:(_,c)=>M[c.dataIndex],align:'right',offset:6}};
+
+new Chart(document.getElementById('c8'),{type:'scatter',data:{datasets:[{data:M.map((_,i)=>({x:rf[i],y:otP[i]})),backgroundColor:C.sla,pointRadius:8,pointHoverRadius:12,...scDL}]},options:scOpt('Refusal (khl)','On Time %',60)});
+new Chart(document.getElementById('c9'),{type:'scatter',data:{datasets:[{data:M.map((_,i)=>({x:so[i],y:ifP[i]})),backgroundColor:C.gda,pointRadius:8,pointHoverRadius:12,...scDL}]},options:scOpt('Stock Out (khl)','In Full %',90)});
+new Chart(document.getElementById('c10'),{type:'scatter',data:{datasets:[{data:M.map((_,i)=>({x:vO[i],y:ot25[i]*100})),backgroundColor:C.tla,pointRadius:9,pointHoverRadius:13,...scDL}]},options:scOpt('Vol. Ordenado (khl)','OTIF DC %',30)});
+</script>
+</body>
+</html>

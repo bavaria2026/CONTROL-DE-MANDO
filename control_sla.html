@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Panel SLA · CD Autosur 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}body{background:#F0F4F8;color:#1a202c;font-family:'DM Sans',sans-serif;font-size:14px}
+.hdr{background:linear-gradient(135deg,#1E3A5F,#2563EB 60%,#3B82F6);padding:16px 24px;color:#fff;position:relative;overflow:hidden}
+.hdr::after{content:'';position:absolute;top:-50%;right:-10%;width:400px;height:400px;background:radial-gradient(circle,rgba(255,255,255,.08),transparent 70%);border-radius:50%}
+.hr{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:relative;z-index:2}
+.hl{display:flex;align-items:center;gap:14px}
+.av{width:48px;height:48px;border-radius:50%;border:3px solid rgba(255,255,255,.5);object-fit:cover}
+.hdr h1{font-size:1.25rem;font-weight:800;letter-spacing:-.5px}
+.hsub{font-size:.68rem;opacity:.7}.hlead{font-size:.66rem;opacity:.9;font-weight:600;display:flex;align-items:center;gap:6px}.hlead::before{content:'';width:6px;height:6px;border-radius:50%;background:#34D399;box-shadow:0 0 6px #34D399}
+.ey{font-size:.56rem;text-transform:uppercase;letter-spacing:2.5px;opacity:.6;font-weight:600}
+/* Tabs */
+.tabs{display:flex;gap:0;background:#fff;border-bottom:2px solid #E2E8F0;overflow-x:auto;padding:0 16px}
+.tab{padding:10px 16px;font-size:.73rem;font-weight:600;cursor:pointer;color:#64748B;background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:.2s}
+.tab:hover{color:#1E40AF;background:#F8FAFC}
+.tab.on{color:#1E40AF;border-bottom-color:#2563EB;background:linear-gradient(180deg,#EFF6FF,#fff)}
+.cnt{padding:18px 24px}
+.sec{display:none}.sec.vis{display:block}
+/* File header */
+.file-hdr{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:12px;margin-bottom:16px;border:1px solid}
+.file-hdr .ficon{font-size:2rem}.file-hdr .fname{font-size:1.05rem;font-weight:700;color:#1E293B}.file-hdr .fmeta{font-size:.68rem;color:#64748B}
+.file-hdr .fbadge{font-size:.6rem;font-weight:700;padding:3px 10px;border-radius:12px;margin-left:auto}
+/* Cards */
+.row2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:16px}
+.card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);border:1px solid #E2E8F0;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0}
+.card.cg::before{background:linear-gradient(90deg,#059669,#34D399)}.card.ca::before{background:linear-gradient(90deg,#D97706,#FBBF24)}.card.cr::before{background:linear-gradient(90deg,#DC2626,#F87171)}.card.cb::before{background:linear-gradient(90deg,#2563EB,#60A5FA)}.card.cp::before{background:linear-gradient(90deg,#7C3AED,#A78BFA)}
+.card .clbl{font-size:.6rem;color:#64748B;text-transform:uppercase;letter-spacing:.8px;font-weight:600}
+.card .cval{font-size:1.5rem;font-weight:800;font-family:'JetBrains Mono',monospace;letter-spacing:-1px;margin-top:2px}
+.card .csub{font-size:.62rem;font-weight:600;margin-top:2px}
+/* Badge */
+.bg{display:inline-block;padding:2px 10px;border-radius:14px;font-size:.58rem;font-weight:700}
+.bg.g{color:#059669;background:#ECFDF5;border:1px solid #A7F3D0}.bg.a{color:#D97706;background:#FFFBEB;border:1px solid #FDE68A}.bg.r{color:#DC2626;background:#FEF2F2;border:1px solid #FECACA}.bg.m{color:#94A3B8;background:#F8FAFC;border:1px solid #E2E8F0}
+/* Box */
+.bx{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);border:1px solid #E2E8F0;margin-bottom:14px}
+.bx .bt{font-size:.85rem;font-weight:700;color:#1E293B}.bx .bs{font-size:.66rem;color:#64748B;margin-bottom:8px}
+/* KPI grid */
+.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:14px}
+.kb{border-radius:10px;padding:11px}
+.kb .kn{font-size:.58rem;color:#64748B;text-transform:uppercase;letter-spacing:.4px;font-weight:600}
+.kb .kv{font-size:1.15rem;font-weight:800;font-family:'JetBrains Mono',monospace;letter-spacing:-.5px;margin-top:1px}
+.kb .kd{font-size:.6rem;font-weight:600}
+/* Table */
+.tb{width:100%;border-collapse:separate;border-spacing:0;font-size:.72rem}
+.tb th{text-align:left;padding:7px 10px;color:#64748B;font-weight:600;font-size:.6rem;text-transform:uppercase;letter-spacing:.4px;background:#F8FAFC;border-bottom:2px solid #E2E8F0}
+.tb td{padding:7px 10px;border-bottom:1px solid #F1F5F9;font-family:'JetBrains Mono',monospace;font-size:.72rem}
+.tb tr:hover td{background:#F8FAFC}
+.vg{color:#059669;font-weight:700}.va{color:#D97706;font-weight:700}.vr{color:#DC2626;font-weight:700}.vm{color:#CBD5E1}
+/* Attendance */
+.att-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+.att-person{padding:8px 10px;border-radius:8px;background:#F8FAFC;border:1px solid #E2E8F0;text-align:center}
+.att-person .aname{font-size:.7rem;font-weight:600;color:#1E293B}.att-person .arole{font-size:.55rem;color:#94A3B8}
+.att-person .adot{font-size:.6rem;margin-top:2px}
+.spark{display:inline-block;vertical-align:middle}
+/* Ring */
+.rg{position:relative;width:52px;height:52px;flex-shrink:0;display:inline-block}.rg svg{transform:rotate(-90deg)}.rg .rb{fill:none;stroke:#E2E8F0;stroke-width:5}.rg .rf{fill:none;stroke-width:5;stroke-linecap:round}.rg .rl{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.55rem;font-weight:700;font-family:'JetBrains Mono',monospace}
+@media(max-width:768px){.cnt{padding:12px 14px}.tabs{padding:0 10px}.row2{grid-template-columns:1fr}.kg{grid-template-columns:repeat(2,1fr)}}
+</style></head><body>
+<!-- BOTÓN VOLVER AL PANEL -->
+<div id="backToPanel" style="position:fixed;top:12px;left:12px;z-index:99999;">
+  <a href="#" onclick="history.back(); return false;" style="
+    display:inline-flex;align-items:center;gap:6px;
+    background:linear-gradient(135deg,#232F3D,#196989);
+    color:#FCD039;padding:10px 20px;border-radius:10px;
+    text-decoration:none;font-family:Arial,sans-serif;
+    font-size:13px;font-weight:700;
+    box-shadow:0 4px 15px rgba(0,0,0,0.3);
+    border:1px solid rgba(252,208,57,0.3);
+    transition:all 0.2s;
+  " onmouseover="this.style.background='#FCD039';this.style.color='#232F3D'" 
+     onmouseout="this.style.background='linear-gradient(135deg,#232F3D,#196989)';this.style.color='#FCD039'">
+    ← Volver al Panel
+  </a>
+</div>
+
+<header class="hdr"><div class="hr"><div class="hl"><img class="av" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAC0ALQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD7LooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKCQK8/+OPxU0P4V+GF1PU0a6vb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" alt="O"/><div><div class="ey">CD Autosur · Bavaria · 2026</div><h1>Panel de SLA</h1><div class="hsub">Enero – Mayo 2026</div><div class="hlead">Oscar Pañuela · Líder del proceso</div></div></div></div></header>
+<nav class="tabs" id="tabs"></nav>
+<div class="cnt" id="main"></div>
+<script>
+const M=['Ene','Feb','Mar','Abr','May'],
+P=['#2563EB','#0891B2','#7C3AED','#DB2777','#D97706','#059669','#DC2626','#EA580C'],
+BG=['#EFF6FF','#F0FDFA','#FAF5FF','#FFF1F2','#FFFBEB','#ECFDF5','#FEF2F2','#FFF7ED'],
+BD=['#BFDBFE','#99F6E4','#D8B4FE','#FECDD3','#FDE68A','#A7F3D0','#FECACA','#FDBA74'],
+FC=[['#EFF6FF','#BFDBFE'],['#FFF7ED','#FDE68A'],['#F0FDFA','#99F6E4'],['#FAF5FF','#C4B5FD'],['#FEF2F2','#FECACA'],['#FFFBEB','#FDE68A']];
+
+const FILES=[
+{id:'comercial',icon:'📊',name:'SLA Comercial V&L',file:'SLA_Comercial_-_V_L_Autosur_2026.xlsx',sheets:'Oriente · Occidente · Poblaciones · Asistencia',color:0,
+ subs:[
+  {name:'Oriente',al:'Ger. Comercial Bogota Oriente',cd:'SLA_AUT_VEN_002',mt:80,mo:[null,64.2,76.5,76.7,76.7],kp:{'Logística':[null,60.0,84.6,85.0,85.0],'Comercial':[null,68.3,68.3,68.3,68.3]}},
+  {name:'Occidente',al:'Ger. Comercial Bogota Occidente',cd:'SLA_MON_AUT_003',mt:80,mo:[null,63.3,63.3,63.3,63.3],kp:{'Logística':[null,58.3,58.3,58.3,58.3],'Comercial':[null,68.3,68.3,68.3,68.3]}},
+  {name:'Poblaciones',al:'Ger. Comercial Centro Poblaciones',cd:'SLA_AUT_VEN_001',mt:80,mo:[null,63.8,83.8,82.5,82.5],kp:{'Logística':[null,66.2,85.0,85.0,85.0],'Comercial':[null,61.3,82.5,80.0,80.0],'OTIF':[73.7,38.0,67.3,80.8,76.7],'On Time':[75.9,39.6,69.9,83.3,78.8],'In Full':[97.1,96.0,96.3,97.0,97.3]}}
+ ],
+ asist:{nombres:['Oscar Peñuela','Diana Ortiz','Juan P. Gómez','Karen Molina','Jhonatan Moreno','Daniela Forero','Santiago Macias','Felipe Pinilla','Olwar Cubillos','Mateo Zarmati','Andrea Sanabria','Luis Hurtado','Yair Ruco','Camilo Quiroga'],cargos:['Gerente CD','Coord. Reparto','Sup. Reparto','Sup. Reparto','Sup. Reparto','Sup. Reparto','Sup. WH','Ger. Comercial','Jefe Comercial','Jefe Comercial','Jefe Comercial','Jefe Comercial','Jefe Comercial','Jefe Comercial'],pct:[78.6,71.4,92.9,92.9,92.9,85.7,85.7,92.9,100,92.9,92.9,92.9,92.9,85.7,78.6,78.6]}
+},
+{id:'renting',icon:'🚛',name:'SLA Renting Bavaria',file:'Formato_SLA_Prestacion_Renting-Bavaria.xlsx',sheets:'SLA T2',color:1,
+ subs:[{name:'Renting T2',al:'Renting Bavaria',cd:'SLA Renting-T2',mt:90,mo:[89.9,86.3,90.8,98.9,null],kp:{'Disponibilidad':[96.2,93.1,92.2,92.2,null],'Repuestos':[72.0,77.2,80.0,88.0,null]}}],asist:null
+},
+{id:'t1t2',icon:'🔄',name:'SLA T1 y T2 Autosur',file:'SLA_Autosur_-_T1__T2.xlsx',sheets:'SLA · Seguimiento · Correlación',color:3,
+ subs:[{name:'T1 y T2',al:'T1 Transport – CD Autosur',cd:'SLA T1 Y T2',mt:95,mo:[99.6,98.9,97.5,98.2,97.5],kp:{'Adh. Secuencia':[100,98.6,97.2,100,98.6],'Tiempos Atención':[100,99.2,97.5,97.5,96.7],'Plan Envase':[93.8,100,93.8,93.8,93.8],'Handling':[100,100,100,100,100],'TSO':[100,96.9,96.9,96.9,96.9]}}],
+ corr:{'Avg Cycle Time':{ac:[1.65,1.28,1.25,1.38,1.10],bu:1.66,r:0.08},'Total Cycle Time':{ac:[1034.6,682.7,648.8,860.4,733.7],bu:925,r:0.86},'LSA (Adh. Plan)':{ac:[100,99,100,99,96],bu:95,r:0.53},'WPS':{ac:[35.4,35.6,35.7,35.5,35.4],bu:34.4,r:-0.40}},
+ asist:null
+},
+{id:'tct',icon:'🗺️',name:'SLA TCT AV26',file:'SLA_TCT_AV26_-_2026.xlsx',sheets:'SLA TCT AV26 · Asistencia Diaria · TOR',color:2,
+ subs:[{name:'TCT AV26',al:'TCT México – Planner Autosur',cd:'SLA 0002 – TCT MX',mt:80,mo:[87.5,87.5,84.4,87.5,87.5],kp:{'CO (Cap. Ocup.)':[0,25,25,0,33.3],'CW (Cap. Peso)':[75,62.5,50,62.5,50],'HCD':[100,100,100,100,100],'IR (Índ. Rec.)':[100,100,100,100,100],'HCD HL/cam':[48.8,49.7,50.8,53.5,57.7]}}],
+ asist:{nombres:['Andrea Osorio','Edgar Orobio','David Cardona','Michael Garcia','Fabián Ramírez','Pablo Chía','Andrés Tapiero'],empresas:['ABI','ABI','ABI','UC','UC','OL','OL'],status:'Sin datos registrados'}
+},
+{id:'oluc',icon:'📦',name:'SLA T2 OL-UC Cargue',file:'SLA_T2_OL_-_UC_Autosur.xlsx',sheets:'Seguimiento · Dashboard · SLA TCT · Cargue T2 · Asistencia · TOR · Action Log',color:4,
+ subs:[{name:'OL-UC Cargue',al:'LIS SAS / Logix Cargo',cd:'SLA 0004',mt:95,mo:[100,98.7,97.8,98.7,98.3],kp:{'Picking':[100,100,100,100,100],'On Time':[100,100,96.9,96.9,96.9],'Seg. Flota':[100,100,100,100,87.5],'WQI':[100,75,87.5,87.5,87.5],'Dif. Inv.':[100,96.9,96.9,100,96.9],'SIF':[100,100,95.8,95.8,100]}}],
+ asist:{nombres:['Andrea Osorio','Edgar Orobio','David Cardona','Michael Garcia','Fabián Ramírez','Pablo Chía','Andrés Tapiero'],empresas:['ABI','ABI','ABI','UC','UC','OL','OL'],status:'Sin datos registrados'}
+},
+{id:'anaplan',icon:'📈',name:'Anaplan KPIs',file:'ANAPLAN_YTD.xlsx',sheets:'YTD',color:5,
+ anaplan:{'2T Turnover':{ac:0.85,bu:1.83,ly:1.53,d:'lb'},'2T LTI':{ac:0,bu:0,ly:0,d:'lb'},'2T Asset Eff.':{ac:112.91,bu:100.37,ly:73.62,d:'hb'},'2T Productivity':{ac:1.67,bu:1.62,ly:1.50,d:'hb'},'2T NPS':{ac:67.81,bu:63.29,ly:62.5,d:'hb'},'T2 Route to Mkt':{ac:2.33,bu:2.89,ly:2.40,d:'lb'},'T2 OTIF':{ac:13.93,bu:7.40,ly:5.2,d:'hb'}}
+}];
+
+const lv=a=>{for(let i=a.length-1;i>=0;i--)if(a[i]!=null)return a[i];return null};
+const st=(v,m)=>v==null?{l:'Sin datos',c:'m',co:'#94A3B8'}:v>=m?{l:'Cumple',c:'g',co:'#059669'}:v>=m*.9?{l:'En riesgo',c:'a',co:'#D97706'}:{l:'No cumple',c:'r',co:'#DC2626'};
+
+function spark(data,color,w=90,h=22){
+  const vd=data.map((v,i)=>v!=null?{x:i,y:v}:null).filter(Boolean);
+  if(vd.length<2)return'';
+  const mn=Math.min(...vd.map(p=>p.y)),mx=Math.max(...vd.map(p=>p.y)),rng=mx-mn||1;
+  const pts=vd.map(p=>`${p.x/(data.length-1)*w},${h-2-(p.y-mn)/rng*(h-4)}`).join(' ');
+  return`<svg class="spark" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"><polygon points="${pts} ${w},${h} 0,${h}" fill="${color}12"/><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+}
+
+function bars(data,labels,meta,colors,h=160){
+  const n=labels.length,bw=Math.min(38,200/n),gap=bw+14,w=n*gap+20;
+  const my=h-meta/100*h;
+  let s=`<svg viewBox="0 0 ${w} ${h+22}" style="width:100%;max-height:210px">`;
+  s+=`<line x1="0" y1="${my}" x2="${w}" y2="${my}" stroke="#059669" stroke-width="1.5" stroke-dasharray="5,3"/>`;
+  s+=`<text x="${w-2}" y="${my-4}" text-anchor="end" font-size="8" fill="#059669" font-weight="600">Meta ${meta}%</text>`;
+  data.forEach((v,i)=>{if(v==null)return;const bh=v/100*h,x=i*gap+10;
+    s+=`<rect x="${x}" y="${h-bh}" width="${bw}" height="${bh}" rx="3" fill="${colors[i]||P[i]}" opacity=".8"/>`;
+    s+=`<text x="${x+bw/2}" y="${h-bh-5}" text-anchor="middle" font-size="10" font-weight="700" font-family="JetBrains Mono" fill="${colors[i]}">${v.toFixed(1)}%</text>`;
+    s+=`<text x="${x+bw/2}" y="${h+14}" text-anchor="middle" font-size="10" font-weight="600" fill="#64748B">${labels[i]}</text>`;
+  });
+  return s+'</svg>';
+}
+
+function ring(v,mt,size=52){
+  const pc=v!=null?Math.min(v/100,1):0,ci=2*Math.PI*20,of=ci*(1-pc),x=st(v,mt);
+  return`<div class="rg" style="width:${size}px;height:${size}px"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><circle class="rb" cx="${size/2}" cy="${size/2}" r="20"/><circle class="rf" cx="${size/2}" cy="${size/2}" r="20" stroke="${x.co}" stroke-dasharray="${ci}" stroke-dashoffset="${of}"/></svg><div class="rl" style="color:${x.co}">${v!=null?Math.round(v)+'%':'—'}</div></div>`;
+}
+
+let cur='comercial';
+
+function render(){
+  // Tabs
+  document.getElementById('tabs').innerHTML=FILES.map(f=>`<button class="tab ${cur===f.id?'on':''}" onclick="cur='${f.id}';render()">${f.icon} ${f.name}</button>`).join('');
+  const F=FILES.find(f=>f.id===cur);
+  const fc=FC[F.color];
+  let h=`<div class="file-hdr" style="background:linear-gradient(135deg,${fc[0]},#fff);border-color:${fc[1]}">
+    <span class="ficon">${F.icon}</span>
+    <div><div class="fname">${F.name}</div><div class="fmeta">📄 ${F.file}</div><div class="fmeta">Hojas: ${F.sheets}</div></div></div>`;
+
+  if(F.id==='anaplan'){h+=renderAnaplan(F);document.getElementById('main').innerHTML=h;return}
+
+  // SLA subs
+  F.subs.forEach((s,si)=>{
+    const v=lv(s.mo),x=st(v,s.mt);
+    const prev=s.mo.filter(x=>x!=null);const tr=prev.length>=2?prev[prev.length-1]-prev[prev.length-2]:0;
+    // Header card
+    h+=`<div class="bx" style="border-left:4px solid ${x.co}"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <div><div class="bt">${s.name} <span class="bg ${x.c}" style="margin-left:8px">${x.l}</span></div><div class="bs">${s.al} · ${s.cd} · Meta: ${s.mt}%</div></div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="text-align:right"><div style="font-size:1.6rem;font-weight:800;font-family:'JetBrains Mono';letter-spacing:-1px;color:${x.co}">${v!=null?v.toFixed(1)+'%':'—'}</div>
+        ${tr?`<div style="font-size:.68rem;font-weight:600;color:${tr>0?'#059669':'#DC2626'}">${tr>0?'▲':'▼'}${Math.abs(tr).toFixed(1)}pp vs mes anterior</div>`:''}</div>
+        ${ring(v,s.mt)}</div></div></div>`;
+    // Bar chart
+    const lb=[],vals=[],cols=[];
+    M.forEach((m,i)=>{if(s.mo[i]!=null){lb.push(m);vals.push(s.mo[i]);cols.push(st(s.mo[i],s.mt).co)}});
+    h+=`<div class="bx"><div class="bt">Tendencia mensual</div><div class="bs">Ene–May 2026 vs Meta ${s.mt}%</div>${bars(vals,lb,s.mt,cols)}</div>`;
+    // KPIs
+    h+='<div class="kg">';
+    Object.entries(s.kp).forEach(([k,vs],idx)=>{
+      const kv=lv(vs);const prev2=vs.filter(x=>x!=null);const dl=prev2.length>=2?prev2[prev2.length-1]-prev2[prev2.length-2]:0;
+      h+=`<div class="kb" style="background:${BG[idx%8]};border:1px solid ${BD[idx%8]}"><div class="kn">${k}</div><div class="kv" style="color:${P[idx%8]}">${kv!=null?kv.toFixed(1):'—'}</div>${dl?`<div class="kd" style="color:${dl>0?'#059669':'#DC2626'}">${dl>0?'▲':'▼'}${Math.abs(dl).toFixed(1)}</div>`:''}${spark(vs,P[idx%8])}</div>`;
+    });
+    h+='</div>';
+    // Detail table
+    h+='<div class="bx"><div class="bt">Detalle por mes</div><div class="bs">Todos los indicadores</div><div style="overflow-x:auto"><table class="tb"><thead><tr><th>Indicador</th>';
+    M.forEach(m=>h+=`<th style="text-align:center">${m}</th>`);
+    h+='</tr></thead><tbody>';
+    Object.entries(s.kp).forEach(([k,vs])=>{
+      h+=`<tr><td style="font-weight:600;font-family:DM Sans;color:#1E293B">${k}</td>`;
+      vs.forEach(v=>h+=v==null?'<td class="vm" style="text-align:center">—</td>':`<td class="${v>=80?'vg':v>=50?'va':'vr'}" style="text-align:center">${v.toFixed(1)}</td>`);
+      h+='</tr>';
+    });
+    h+=`<tr style="background:#F8FAFC"><td style="font-weight:700;color:#1E40AF">SLA Total</td>`;
+    s.mo.forEach(v=>h+=v==null?'<td class="vm" style="text-align:center">—</td>':`<td style="text-align:center;color:${st(v,s.mt).co};font-weight:700">${v.toFixed(1)}%</td>`);
+    h+='</tr></tbody></table></div></div>';
+  });
+
+  // Correlación (T1T2)
+  if(F.corr){
+    h+=`<div class="bx" style="border-left:4px solid #7C3AED"><div class="bt">📊 Correlación SLA ↔ Anaplan</div><div class="bs">Hoja: Correlación · Coeficiente R</div></div>`;
+    h+='<div class="kg">';
+    Object.entries(F.corr).forEach(([k,v],i)=>{
+      const cols2=['#2563EB','#0891B2','#7C3AED','#DB2777'];
+      const str=Math.abs(v.r)>=0.7?'Fuerte':Math.abs(v.r)>=0.4?'Moderada':'Débil';
+      h+=`<div class="kb" style="background:${BG[i]};border:1px solid ${BD[i]}"><div class="kn">${k}</div><div class="kv" style="color:${cols2[i]}">R = ${v.r.toFixed(2)}</div><div class="kd" style="color:#64748B">${str}</div>${spark(v.ac,cols2[i],80,18)}</div>`;
+    });
+    h+='</div>';
+    h+='<div class="bx"><div class="bt">Valores mensuales</div><div style="overflow-x:auto"><table class="tb"><thead><tr><th>Indicador</th>';
+    M.forEach(m=>h+=`<th style="text-align:center">${m}</th>`);
+    h+='<th style="text-align:center">BU</th><th style="text-align:center">R</th><th>Fuerza</th></tr></thead><tbody>';
+    Object.entries(F.corr).forEach(([k,v])=>{
+      const str=Math.abs(v.r)>=0.7?'Fuerte':Math.abs(v.r)>=0.4?'Moderada':'Débil';
+      h+=`<tr><td style="font-weight:600;font-family:DM Sans">${k}</td>`;
+      v.ac.forEach(x=>h+=`<td style="text-align:center">${x.toFixed(1)}</td>`);
+      h+=`<td style="text-align:center;color:#64748B">${v.bu}</td><td class="${Math.abs(v.r)>=0.7?'vg':Math.abs(v.r)>=0.4?'va':'vr'}" style="text-align:center">${v.r.toFixed(2)}</td><td><span class="bg ${Math.abs(v.r)>=0.7?'g':Math.abs(v.r)>=0.4?'a':'r'}">${str}</span></td></tr>`;
+    });
+    h+='</tbody></table></div></div>';
+  }
+
+  // Asistencia
+  if(F.asist){
+    h+=`<div class="bx" style="border-left:4px solid #0891B2"><div class="bt">👥 Asistencia</div><div class="bs">Hoja: ${F.id==='comercial'?'Asistencia Comercial':'Asistencia Diaria'}</div>`;
+    if(F.asist.status){
+      h+=`<div style="padding:16px;text-align:center;color:#94A3B8;font-size:.8rem">⚠️ ${F.asist.status}</div>`;
+      h+='<div class="att-grid">';
+      F.asist.nombres.forEach((n,i)=>h+=`<div class="att-person"><div class="aname">${n}</div><div class="arole">${F.asist.empresas[i]}</div></div>`);
+      h+='</div>';
+    } else {
+      // Show attendance bar chart
+      const apct=F.asist.pct;
+      const aMonthly=[];
+      for(let i=0;i<5;i++){const chunk=apct.slice(i*4,(i+1)*4).filter(Boolean);aMonthly.push(chunk.length?Math.round(chunk.reduce((a,b)=>a+b,0)/chunk.length*100)/100:null)}
+      const aCols=aMonthly.map(v=>v!=null&&v>=90?'#059669':v!=null&&v>=80?'#D97706':'#DC2626');
+      h+=bars(aMonthly.map(v=>v!=null?v*100:null),M,90,aCols,130);
+      h+='<div class="att-grid" style="margin-top:10px">';
+      F.asist.nombres.forEach((n,i)=>h+=`<div class="att-person"><div class="aname">${n}</div><div class="arole">${F.asist.cargos[i]}</div></div>`);
+      h+='</div>';
+    }
+    h+='</div>';
+  }
+  document.getElementById('main').innerHTML=h;
+}
+
+function renderAnaplan(F){
+  let h='';
+  const mx=Math.max(...Object.values(F.anaplan).map(v=>Math.max(v.ac,v.bu,v.ly)));
+  h+='<div class="kg">';
+  Object.entries(F.anaplan).forEach(([k,v],i)=>{
+    const diff=v.ac-v.bu;const good=v.d==='lb'?diff<=0:diff>=0;
+    h+=`<div class="kb" style="background:${BG[i%8]};border:1px solid ${BD[i%8]}"><div class="kn">${k}</div><div class="kv" style="color:${P[i%8]}">${v.ac.toFixed(2)}</div><div class="kd" style="color:${good?'#059669':'#DC2626'}">vs BU: ${diff>=0?'+':''}${diff.toFixed(2)} <span class="bg ${good?'g':'r'}">${good?'✓':'✗'}</span></div></div>`;
+  });
+  h+='</div>';
+  h+='<div class="bx"><div class="bt">Performance AC vs Budget vs LY</div><div class="bs">DC Autosur · YTD Mayo 2026</div>';
+  Object.entries(F.anaplan).forEach(([k,v],i)=>{
+    const diff=v.ac-v.bu;const good=v.d==='lb'?diff<=0:diff>=0;
+    const maxV=Math.max(v.ac,v.bu,v.ly)||1;
+    h+=`<div style="margin-bottom:12px"><div style="font-size:.72rem;font-weight:600;color:#334155;margin-bottom:4px">${k} <span class="bg ${good?'g':'r'}" style="margin-left:6px">${good?'On Track':'Gap'}</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin:2px 0"><span style="font-size:.55rem;color:#94A3B8;width:22px">AC</span><div style="flex:1;height:20px;background:#F1F5F9;border-radius:4px;overflow:hidden"><div style="width:${v.ac/maxV*100}%;height:100%;background:${P[i%8]};border-radius:4px;display:flex;align-items:center;padding:0 6px"><span style="font-size:.6rem;color:#fff;font-weight:700;font-family:JetBrains Mono">${v.ac.toFixed(2)}</span></div></div></div>
+    <div style="display:flex;align-items:center;gap:6px;margin:2px 0"><span style="font-size:.55rem;color:#94A3B8;width:22px">BU</span><div style="flex:1;height:14px;background:#F1F5F9;border-radius:3px;overflow:hidden"><div style="width:${v.bu/maxV*100}%;height:100%;background:#94A3B8;border-radius:3px;display:flex;align-items:center;padding:0 6px"><span style="font-size:.55rem;color:#fff;font-weight:600;font-family:JetBrains Mono">${v.bu.toFixed(2)}</span></div></div></div>
+    <div style="display:flex;align-items:center;gap:6px;margin:2px 0"><span style="font-size:.55rem;color:#94A3B8;width:22px">LY</span><div style="flex:1;height:14px;background:#F1F5F9;border-radius:3px;overflow:hidden"><div style="width:${v.ly/maxV*100}%;height:100%;background:#CBD5E1;border-radius:3px;display:flex;align-items:center;padding:0 6px"><span style="font-size:.55rem;color:#64748B;font-weight:600;font-family:JetBrains Mono">${v.ly.toFixed(2)}</span></div></div></div></div>`;
+  });
+  h+='</div>';
+  return h;
+}
+
+document.addEventListener('DOMContentLoaded',render);
+</script></body></html>

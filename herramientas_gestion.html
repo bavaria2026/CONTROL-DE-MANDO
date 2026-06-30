@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HG Visual — Análisis 5 Por Qués & Resolución de Problemas</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+:root{--gold:#FCD039;--gd:#e6bc20;--gs:rgba(252,208,57,.12);--dk:#232F3D;--dkl:#2e3d4f;--dks:rgba(35,47,61,.08);--lb:#4CC4B0;--lbd:#3aab98;--lbs:rgba(76,196,176,.10);--sl:#196989;--sll:#1f7fa5;--sls:rgba(25,105,137,.10);--bg:#fff;--bgs:#f5f7fa;--brd:#e4e9f0;--t1:#1a202c;--t2:#4a5568;--tm:#8899a6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bgs);color:var(--t1);min-height:100vh}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,var(--dk),#1b2631,var(--sl));padding:22px 40px;display:flex;justify-content:space-between;align-items:center;position:relative;overflow:hidden}
+.hdr::before{content:'';position:absolute;top:-60%;right:-5%;width:350px;height:350px;background:radial-gradient(circle,rgba(252,208,57,.15),transparent 70%);border-radius:50%}
+.hdr::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--lb),var(--sl))}
+.hdr h1{font-size:1.4rem;font-weight:800;color:#fff;letter-spacing:-.02em;position:relative;z-index:2}
+.hdr h1 span{color:var(--gold)}
+.hdr p{font-size:.65rem;color:rgba(255,255,255,.5);margin-top:3px;text-transform:uppercase;letter-spacing:.05em}
+.badge{display:inline-flex;align-items:center;gap:5px;background:rgba(76,196,176,.2);border:1px solid rgba(76,196,176,.4);padding:4px 12px;border-radius:20px;font-size:.58rem;color:var(--lb);font-weight:700;text-transform:uppercase;letter-spacing:.06em;position:relative;z-index:2}
+.badge::before{content:'';width:6px;height:6px;background:var(--lb);border-radius:50%;animation:pls 2s infinite}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* QR BANNER */
+.qr-banner{background:linear-gradient(135deg,var(--sl),var(--dk));overflow:hidden}
+.qr-inner{max-width:1460px;margin:0 auto;display:grid;grid-template-columns:1fr auto;align-items:center}
+.qr-text{padding:32px 40px}
+.qr-text .sub{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:6px}
+.qr-text h2{font-size:1.35rem;font-weight:800;color:#fff;line-height:1.3;margin-bottom:10px}
+.qr-text h2 span{color:var(--gold)}
+.qr-text .desc{font-size:.7rem;color:rgba(255,255,255,.55);line-height:1.6;max-width:400px;margin-bottom:16px}
+.qr-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 24px;background:var(--gold);color:var(--dk);border-radius:8px;font-weight:700;font-size:.78rem;text-decoration:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:transform .15s}
+.qr-btn:hover{transform:scale(1.03)}
+.qr-right{display:flex;align-items:center;gap:24px;padding:28px 40px 28px 0}
+.qr-wrap{background:#fff;border-radius:16px;padding:12px;box-shadow:0 8px 32px rgba(0,0,0,.25)}
+.qr-wrap-label{text-align:center;margin-top:8px;font-size:.56rem;color:rgba(255,255,255,.45);font-weight:500}
+.qr-stats{display:flex;flex-direction:column;gap:8px}
+.qr-stat{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 16px;text-align:center}
+.qr-stat .sv{font-size:1.3rem;font-weight:800}
+.qr-stat .sl{font-size:.5rem;color:rgba(255,255,255,.45);font-weight:600;text-transform:uppercase;margin-top:1px}
+
+/* FILTER BAR */
+.fbar{background:#fff;border-bottom:1px solid var(--brd);padding:10px 36px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.fbar-left{display:flex;align-items:center;gap:8px}
+.fbar-label{font-size:.63rem;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.06em}
+.fbtn{padding:5px 13px;border:1.5px solid var(--brd);border-radius:8px;background:#fff;font-family:'Inter',sans-serif;font-size:.66rem;font-weight:600;color:var(--t2);cursor:pointer;transition:all .15s}
+.fbtn:hover{border-color:var(--sl);color:var(--sl)}
+.fbtn.act{background:var(--dk);color:#fff;border-color:var(--dk)}
+.finfo{font-size:.63rem;color:var(--tm)}
+
+/* DASHBOARD */
+.dash{padding:22px 36px 40px;display:flex;flex-direction:column;gap:16px;max-width:1460px;margin:0 auto}
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.kc{background:#fff;border:1px solid var(--brd);border-radius:12px;padding:14px 16px;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:transform .2s,box-shadow .2s}
+.kc:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.07)}
+.kc .ks{position:absolute;top:0;left:0;right:0;height:3px}
+.kc .ki{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;margin-bottom:6px}
+.kc .kv{font-size:1.6rem;font-weight:800;letter-spacing:-.03em;line-height:1}
+.kc .kl{font-size:.6rem;color:var(--tm);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.kc .ksub{font-size:.58rem;color:var(--t2);margin-top:2px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g23{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+.cd{background:#fff;border:1px solid var(--brd);border-radius:12px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,.03)}
+.ct{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tm);margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.ct .dt{width:7px;height:7px;border-radius:50%}
+.sl-label{font-size:.78rem;font-weight:700;margin-bottom:2px;margin-top:6px;display:flex;align-items:center;gap:10px}
+.sl-label .ln{flex:1;height:1px;background:var(--brd)}
+.tg{font-size:.58rem;padding:4px 11px;border-radius:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+
+/* TABLE */
+.dtbl{width:100%;border-collapse:collapse;font-size:.7rem}
+.dtbl th{text-align:left;font-weight:700;color:var(--dk);background:var(--bgs);text-transform:uppercase;letter-spacing:.06em;padding:8px 10px;border-bottom:2px solid var(--dk);font-size:.58rem}
+.dtbl td{padding:8px 10px;border-bottom:1px solid #f0f2f5;color:var(--t2)}
+.dtbl tr:hover td{background:var(--gs)}
+.hv{color:var(--dk);font-weight:800}
+
+/* SOLUTIONS */
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sc{background:var(--bgs);border-radius:10px;padding:12px 14px;border-left:4px solid var(--sl);font-size:.66rem;color:var(--t2);line-height:1.5}
+.sc .sv{font-size:1.15rem;font-weight:800;margin-bottom:3px}
+
+/* SANKEY */
+.sky-c{display:flex;align-items:stretch;min-height:300px;position:relative}
+.sky-col{flex:1;display:flex;flex-direction:column;gap:5px;z-index:2;padding:3px 0}
+.sky-col.lf{align-items:flex-end;padding-right:5px}
+.sky-col.rt{align-items:flex-start;padding-left:5px}
+.sky-mid{flex:2;position:relative}
+.sky-n{padding:7px 12px;border-radius:8px;font-size:.65rem;font-weight:600;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:transform .15s;cursor:default}
+.sky-n:hover{transform:scale(1.04)}
+.sky-n .vl{font-weight:800;font-size:.78rem}
+.sky-svg{position:absolute;inset:0;width:100%;height:100%}
+
+/* CASE STUDY */
+.csb{background:#fff;border:1px solid var(--brd);border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.csh{padding:14px 20px;border-bottom:1px solid var(--brd);background:var(--bgs)}
+.csbdg{display:inline-block;padding:3px 11px;border-radius:6px;color:#fff;font-size:.56rem;font-weight:800;letter-spacing:.08em;margin-bottom:4px}
+.cstit{font-size:.85rem;font-weight:800;color:var(--dk)}
+.csmeta{font-size:.62rem;color:var(--tm);margin-top:3px}
+.csbody{display:grid;grid-template-columns:1fr 36px 1fr;align-items:stretch}
+.cspnl{padding:18px 20px}
+.cspnl.lp{border-right:1px solid var(--brd)}
+.csarr{display:flex;align-items:center;justify-content:center;background:var(--bgs)}
+.plbl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tm);margin-bottom:12px;display:flex;align-items:center;gap:5px}
+.plbl .pd{width:6px;height:6px;border-radius:50%}
+.wstep{display:flex;gap:9px;align-items:flex-start}
+.wnum{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.7rem;font-weight:800;flex-shrink:0;margin-top:1px}
+.wcont{font-size:.7rem;color:var(--t2);line-height:1.5;padding:4px 0}
+.wcont strong{color:var(--dk);font-weight:700}
+.wconn{width:2px;height:12px;background:var(--brd);margin-left:12px}
+.wstep.root .wcont{background:var(--gs);padding:7px 11px;border-radius:8px;border-left:3px solid var(--gold)}
+.rcard{display:flex;flex-direction:column;gap:9px}
+.rrow{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.rk{font-size:.62rem;color:var(--tm);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.rv{font-size:.7rem;font-weight:700;text-align:right}
+.rdiv{height:1px;background:var(--brd)}
+.rsol{background:var(--bgs);border-radius:8px;padding:9px 13px}
+.rsol-l{font-size:.56rem;font-weight:700;color:var(--sl);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.rsol-t{font-size:.7rem;color:var(--t2);line-height:1.5}
+.tpill{color:#fff;padding:2px 10px;border-radius:10px;font-size:.62rem}
+
+/* MINI SUMMARY */
+.msum{display:flex;gap:14px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.mbox{background:var(--bgs);border-radius:8px;padding:9px 16px;text-align:center;min-width:100px}
+.mbox .mmv{font-size:1.2rem;font-weight:800}
+.mbox .mml{font-size:.55rem;color:var(--tm);font-weight:600;text-transform:uppercase;margin-top:1px}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(35,47,61,.7);z-index:9999;overflow-y:auto;backdrop-filter:blur(4px)}
+.modal-overlay.show{display:block}
+.modal{max-width:780px;margin:30px auto;background:var(--bgs);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3);position:relative}
+.modal-hdr{background:linear-gradient(135deg,var(--dk),var(--sl));padding:24px 28px;text-align:center}
+.modal-hdr h2{color:#fff;font-size:1.3rem;font-weight:800}
+.modal-hdr h2 span{color:var(--gold)}
+.modal-hdr p{color:rgba(255,255,255,.5);font-size:.68rem;margin-top:4px}
+.modal-close{position:absolute;top:16px;right:20px;background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.modal-close:hover{background:rgba(255,255,255,.3)}
+.modal-body{padding:24px 24px 32px;display:flex;flex-direction:column;gap:16px}
+.fsec{background:#fff;border:1px solid var(--brd);border-radius:12px;overflow:hidden}
+.fsh{padding:14px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--brd)}
+.fnum{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.8rem;flex-shrink:0}
+.fsh h3{font-size:.8rem;font-weight:700;color:var(--dk)}
+.fsh p{font-size:.58rem;color:var(--tm);margin-top:1px}
+.fbdy{padding:16px 18px;display:flex;flex-direction:column;gap:14px}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld label{font-size:.65rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.05em}
+.fld label .rq{color:#e53e3e;margin-left:2px}
+.fld input,.fld select,.fld textarea{padding:9px 12px;border:1.5px solid var(--brd);border-radius:8px;font-size:.78rem;font-family:'Inter',sans-serif;color:var(--t1);outline:none;transition:border .2s}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--sl);box-shadow:0 0 0 3px var(--sls)}
+.fld textarea{resize:vertical;min-height:60px}
+.fld select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' stroke='%238899a6' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-color:#fff}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.wf{position:relative;padding-left:34px}
+.wf::before{content:attr(data-n);position:absolute;left:0;top:22px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.68rem;color:#fff;background:var(--sl)}
+.wf.w5::before{background:var(--gold);color:var(--dk)}
+.wfc{width:2px;height:12px;background:var(--brd);margin-left:11px}
+.rootf textarea{border-color:var(--gold);background:rgba(252,208,57,.05)}
+.rootf label{color:var(--gd)!important}
+.btn-row{display:flex;gap:10px;justify-content:center;padding:8px 0}
+.btn{padding:11px 28px;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;transition:transform .15s}
+.btn:active{transform:scale(.97)}
+.btn-p{background:var(--dk);color:#fff;box-shadow:0 4px 12px rgba(35,47,61,.2)}
+.btn-s{background:#fff;color:var(--dk);border:1.5px solid var(--brd)}
+.success-msg{display:none;text-align:center;padding:36px 20px}
+.success-msg .chk{width:56px;height:56px;background:var(--lb);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:1.6rem;color:#fff}
+.success-msg h2{color:var(--dk);font-size:1.1rem;margin-bottom:4px}
+.success-msg p{color:var(--tm);font-size:.72rem}
+
+.footer{text-align:center;padding:14px 36px;border-top:2px solid var(--brd);font-size:.55rem;color:var(--tm);background:#fff}
+@media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr)}.g2,.g23{grid-template-columns:1fr}.sg{grid-template-columns:1fr}.hdr{flex-direction:column;gap:12px;padding:18px}.dash{padding:14px}.sky-c{flex-direction:column;min-height:auto}.csbody{grid-template-columns:1fr}.cspnl.lp{border-right:none;border-bottom:1px solid var(--brd)}.csarr{padding:6px;transform:rotate(90deg)}.qr-inner{grid-template-columns:1fr!important}.qr-right{display:none!important}.fbar-btns{flex-wrap:wrap}.r2{grid-template-columns:1fr}.modal{margin:10px}}
+</style>
+</head>
+<body>
+<!-- BOTÓN VOLVER AL PANEL -->
+<div id="backToPanel" style="position:fixed;top:12px;left:12px;z-index:99999;">
+  <a href="#" onclick="history.back(); return false;" style="
+    display:inline-flex;align-items:center;gap:6px;
+    background:linear-gradient(135deg,#232F3D,#196989);
+    color:#FCD039;padding:10px 20px;border-radius:10px;
+    text-decoration:none;font-family:Arial,sans-serif;
+    font-size:13px;font-weight:700;
+    box-shadow:0 4px 15px rgba(0,0,0,0.3);
+    border:1px solid rgba(252,208,57,0.3);
+    transition:all 0.2s;
+  " onmouseover="this.style.background='#FCD039';this.style.color='#232F3D'" 
+     onmouseout="this.style.background='linear-gradient(135deg,#232F3D,#196989)';this.style.color='#FCD039'">
+    ← Volver al Panel
+  </a>
+</div>
+
+
+<!-- HEADER -->
+<div class="hdr">
+  <div><h1><span>HG</span> Visual — Análisis Integrado</h1><p>5 Por Qués & Resolución de Problemas Front Line │ Ene – Jun 2025</p></div>
+  <span class="badge">Datos Reales</span>
+</div>
+
+<!-- QR BANNER -->
+<div class="qr-banner">
+  <div class="qr-inner">
+    <div class="qr-text">
+      <div class="sub">Formulario de Reporte</div>
+      <h2>Registra tu Análisis<br><span>5 Por Qués</span> & Resolución</h2>
+      <div class="desc">Escanea el QR o haz clic para abrir el cuestionario con los campos automáticos del Excel: Fecha, Placa, Coordinador, Negocio, Indicador Afectado, Problema, los 5 Por Qués, Causa Raíz y Calificación.</div>
+      <button class="qr-btn" onclick="openModal()">Abrir Cuestionario ➜</button>
+    </div>
+    <div class="qr-right">
+      <div><div class="qr-wrap" id="qrcode"></div><div class="qr-wrap-label">Escanea con tu celular</div></div>
+      <div class="qr-stats">
+        <div class="qr-stat"><div class="sv" style="color:var(--gold)">4</div><div class="sl">Secciones</div></div>
+        <div class="qr-stat"><div class="sv" style="color:var(--lb)">14</div><div class="sl">Campos Excel</div></div>
+        <div class="qr-stat"><div class="sv" style="color:#fff">100%</div><div class="sl">Digital</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="fbar">
+  <div class="fbar-left">
+    <span class="fbar-label">Filtrar por mes:</span>
+    <div class="fbar-btns" style="display:flex;gap:4px">
+      <button class="fbtn act" onclick="flt('all',this)">Todos</button>
+      <button class="fbtn" onclick="flt('ene',this)">Ene</button>
+      <button class="fbtn" onclick="flt('feb',this)">Feb</button>
+      <button class="fbtn" onclick="flt('mar',this)">Mar</button>
+      <button class="fbtn" onclick="flt('abr',this)">Abr</button>
+      <button class="fbtn" onclick="flt('may',this)">May</button>
+      <button class="fbtn" onclick="flt('jun',this)">Jun</button>
+    </div>
+  </div>
+  <div class="finfo" id="finfo">Mostrando: <strong style="color:var(--dk)">Todos los meses</strong></div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dash">
+  <div class="kpi-row">
+    <div class="kc"><div class="ks" style="background:var(--gold)"></div><div class="ki" style="background:var(--gs);color:var(--gd)">📋</div><div class="kv" id="kpiTotal" style="color:var(--dk)">5,605</div><div class="kl">Total Registros 5PQ</div><div class="ksub" id="kpiSub">Ene – May 2025</div></div>
+    <div class="kc"><div class="ks" style="background:var(--sl)"></div><div class="ki" style="background:var(--sls);color:var(--sl)">🔄</div><div class="kv" style="color:var(--sl)">55.5%</div><div class="kl">Devoluciones</div><div class="ksub">Clase dominante 5PQ</div></div>
+    <div class="kc"><div class="ks" style="background:var(--lb)"></div><div class="ki" style="background:var(--lbs);color:var(--lbd)">🛠️</div><div class="kv" style="color:var(--lbd)">205</div><div class="kl">Problemas Front Line</div><div class="ksub">Junio 2025</div></div>
+    <div class="kc"><div class="ks" style="background:var(--lb)"></div><div class="ki" style="background:var(--lbs);color:var(--lbd)">✅</div><div class="kv" style="color:var(--lbd)">100%</div><div class="kl">Efectividad</div><div class="ksub">Promedio resolución</div></div>
+    <div class="kc"><div class="ks" style="background:var(--dk)"></div><div class="ki" style="background:var(--dks);color:var(--dk)">👥</div><div class="kv" style="color:var(--dk)">116</div><div class="kl">Indicadores Afectados</div><div class="ksub">5 clases identificadas</div></div>
+  </div>
+
+  <div class="sl-label"><span class="tg" style="background:var(--gs);color:var(--gd)">5 Por Qués</span><span class="ln"></span></div>
+  <div class="g2">
+    <div class="cd"><div class="ct"><span class="dt" style="background:var(--gold)"></span> Distribución por Clase de Indicador</div><div style="max-width:290px;margin:0 auto"><canvas id="c1"></canvas></div></div>
+    <div class="cd"><div class="ct"><span class="dt" style="background:var(--dk)"></span> Tendencia Mensual — Registros 5PQ</div><canvas id="c2"></canvas></div>
+  </div>
+  <div class="g23">
+    <div class="cd"><div class="ct"><span class="dt" style="background:var(--lb)"></span> Registros por Analista</div><canvas id="c3"></canvas></div>
+    <div class="cd"><div class="ct"><span class="dt" style="background:var(--dk)"></span> Top 10 Placas</div>
+      <table class="dtbl"><thead><tr><th>Placa</th><th>Dev.</th><th>Mod.</th><th>Total</th></tr></thead><tbody>
+        <tr><td>GUR493</td><td>120</td><td>76</td><td class="hv">196</td></tr>
+        <tr><td>JRZ159</td><td>99</td><td>85</td><td class="hv">184</td></tr>
+        <tr><td>GUR487</td><td>97</td><td>56</td><td class="hv">153</td></tr>
+        <tr><td>JUN832</td><td>98</td><td>43</td><td class="hv">141</td></tr>
+        <tr><td>VEJ904</td><td>80</td><td>59</td><td class="hv">139</td></tr>
+        <tr><td>QJX770</td><td colspan="2" style="text-align:center;color:var(--tm)">—</td><td class="hv">137</td></tr>
+        <tr><td>VEL927</td><td colspan="2" style="text-align:center;color:var(--tm)">—</td><td class="hv">131</td></tr>
+        <tr><td>GUR492</td><td colspan="2" style="text-align:center;color:var(--tm)">—</td><td class="hv">127</td></tr>
+        <tr><td>LCO196</td><td colspan="2" style="text-align:center;color:var(--tm)">—</td><td class="hv">124</td></tr>
+        <tr><td>PSX923</td><td colspan="2" style="text-align:center;color:var(--tm)">—</td><td class="hv">124</td></tr>
+      </tbody></table></div>
+  </div>
+
+  <div class="sl-label"><span class="tg" style="background:var(--sls);color:var(--sl)">Resolución de Problemas Front Line</span><span class="ln"></span></div>
+  <div class="g2">
+    <div class="cd"><div class="ct"><span class="dt" style="background:var(--sl)"></span> Distribución por Clase de Novedad</div><canvas id="c4"></canvas></div>
+    <div class="cd"><div class="ct"><span class="dt" style="background:var(--lb)"></span> Indicador Afectado</div><div style="max-width:290px;margin:0 auto"><canvas id="c5"></canvas></div></div>
+  </div>
+  <div class="cd">
+    <div class="ct"><span class="dt" style="background:var(--lb)"></span> Top Soluciones Aplicadas</div>
+    <div class="sg">
+      <div class="sc" style="border-left-color:var(--dk)"><div class="sv" style="color:var(--dk)">414</div>Se asigna vehículo de apoyo para cumplir con el traslado.</div>
+      <div class="sc" style="border-left-color:var(--gd)"><div class="sv" style="color:var(--gd)">395</div>Se ajusta el turno de cargue para optimizar tiempos.</div>
+      <div class="sc" style="border-left-color:var(--lbd)"><div class="sv" style="color:var(--lbd)">393</div>Se escala con dotación para reposición.</div>
+      <div class="sc" style="border-left-color:var(--sl)"><div class="sv" style="color:var(--sl)">391</div>Se notifica a control de flota para seguimiento GPS.</div>
+      <div class="sc" style="border-left-color:var(--dk)"><div class="sv" style="color:var(--dk)">382</div>Se actualiza la planificación de ruta.</div>
+      <div class="sc" style="border-left-color:var(--gold)"><div class="sv" style="color:var(--gd)">1,975</div>Total soluciones aplicadas en el período.</div>
+    </div>
+  </div>
+
+  <div class="sl-label"><span class="tg" style="background:var(--lbs);color:var(--lbd)">Conexión Indicador ↔ Novedad</span><span class="ln"></span></div>
+  <div class="cd">
+    <div style="text-align:center;margin-bottom:12px"><span style="font-size:.65rem;font-weight:700;color:var(--dk);text-transform:uppercase;letter-spacing:.1em">Indicador Afectado → Clase de Novedad</span></div>
+    <div class="sky-c" id="skyC"><div class="sky-col lf" id="skyL"></div><div class="sky-mid"><svg class="sky-svg" id="skySvg"></svg></div><div class="sky-col rt" id="skyR"></div></div>
+  </div>
+
+  <div class="cd"><div class="ct"><span class="dt" style="background:var(--gold)"></span> Top Placas — Devolución vs Modulaciones</div><canvas id="c6" style="max-height:340px"></canvas>
+    <div class="msum"><div class="mbox"><div class="mmv" style="color:var(--dk)">494</div><div class="mml">Devoluciones</div></div><div class="mbox"><div class="mmv" style="color:var(--gd)">319</div><div class="mml">Modulaciones</div></div><div class="mbox"><div class="mmv" style="color:var(--sl)">813</div><div class="mml">Gran Total</div></div></div>
+  </div>
+
+  <!-- DESGLOSE -->
+  <div class="sl-label"><span class="tg" style="background:var(--dk);color:var(--gold)">Desglose 5PQ ↔ Resolución</span><span class="ln"></span></div>
+
+  <div class="csb"><div class="csh"><div class="csbdg" style="background:var(--dk)">CASO 1</div><div class="cstit">GUR493 — Devolución → Planeación</div><div class="csmeta">Analista: Sebastian H. │ Indicador: Planeación │ Efectividad: <span style="color:var(--lbd);font-weight:800">100%</span></div></div>
+    <div class="csbody"><div class="cspnl lp"><div class="plbl"><span class="pd" style="background:var(--sl)"></span>Análisis 5 Por Qués</div>
+      <div class="wstep"><div class="wnum" style="background:var(--dk)">P</div><div class="wcont"><strong>Problema:</strong> Devolución en GUR493 — producto no entregado al cliente.</div></div><div class="wconn"></div>
+      <div class="wstep"><div class="wnum" style="background:var(--sl)">1</div><div class="wcont"><strong>¿Por qué?</strong> El vehículo llegó fuera del horario de recepción.</div></div><div class="wconn"></div>
+      <div class="wstep"><div class="wnum" style="background:var(--sl)">2</div><div class="wcont"><strong>¿Por qué?</strong> La ruta tenía más paradas de las posibles en el turno.</div></div><div class="wconn"></div>
+      <div class="wstep"><div class="wnum" style="background:var(--sl)">3</div><div class="wcont"><strong>¿Por qué?</strong> La planificación no consideró tiempos reales de descargue.</div></div><div class="wconn"></div>
+      <div class="wstep"><div class="wnum" style="background:var(--sl)">4</div><div class="wcont"><strong>¿Por qué?</strong> Parámetros de planeación desactualizados.</div></div><div class="wconn"></div>
+      <div class="wstep root"><div class="wnum" style="background:var(--gold);color:var(--dk)">5</div><div class="wcont"><strong>Causa Raíz:</strong> Falta de retroalimentación operación↔planeación para ajustar ventanas.</div></div>
+    </div><div class="csarr"><svg width="36" height="36" viewBox="0 0 40 40"><path d="M8 20h24M26 14l6 6-6 6" stroke="#196989" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg></div>
+    <div class="cspnl"><div class="plbl"><span class="pd" style="background:var(--lb)"></span>Resolución Aplicada</div>
+      <div class="rcard"><div class="rrow"><span class="rk">Clase Novedad</span><span class="rv" style="color:var(--sl)">Planeación</span></div><div class="rrow"><span class="rk">Indicador</span><span class="rv" style="color:var(--dk)">Planeación (30)</span></div><div class="rrow"><span class="rk">Registros</span><span class="rv" style="color:var(--dk)">120 dev + 76 mod</span></div><div class="rdiv"></div>
+      <div class="rsol"><div class="rsol-l">Solución</div><div class="rsol-t">Se actualiza la planificación de ruta para compensar el tiempo.</div></div>
+      <div class="rsol"><div class="rsol-l">Acción complementaria</div><div class="rsol-t">Se asigna vehículo de apoyo para cumplir traslado.</div></div>
+      <div class="rdiv"></div><div class="rrow"><span class="rk">Frecuencia</span><span class="rv tpill" style="background:var(--sl)">382 veces</span></div><div class="rrow"><span class="rk">Efectividad</span><span class="rv tpill" style="background:var(--lbd)">100%</span></div></div>
+    </div></div>
+  </div>
+
+  <div class="csb"><div class="csh"><div class="csbdg" style="background:var(--sl)">CASO 2</div><div class="cstit">JRZ159 — Modulaciones → Kits de Reparto</div><div class="csmeta">Analista: Ruben P. │ Indicador: Kits de Reparto │ Efectividad: <span style="color:var(--lbd);font-weight:800">100%</span></div></div>
+    <div class="csbody"><div class="cspnl lp"><div class="plbl"><span class="pd" style="background:var(--sl)"></span>Análisis 5 Por Qués</div>
+      <div class="wstep"><div class="wnum" style="background:var(--dk)">P</div><div class="wcont"><strong>Problema:</strong> Modulación en JRZ159 — reparto incompleto por falta de kit.</div></div><div class="wconn"></div>
+      <div class="wstep"><div class="wnum" style="background:var(--sl)">1</div><div class="wcont"><strong>¿Por qué?</strong> Conductor sin kit de reparto completo al iniciar.</div></div><div class="wconn"></div>
+      <div class="wstep"><div class="wnum" style="background:var(--sl)">2</div><div class="wcont"><strong>¿Por qué?</strong> Kit no preparado por dotación antes del turno.</div></div><div class="wconn"></div>
+      <div class="wstep"><div class="wnum" style="background:var(--sl)">3</div><div class="wcont"><strong>¿Por qué?</strong> Sin inventario disponible en bodega.</div></div><div class="wconn"></div>
+      <div class="wstep"><div class="wnum" style="background:var(--sl)">4</div><div class="wcont"><strong>¿Por qué?</strong> Sin alertas de inventario mínimo.</div></div><div class="wconn"></div>
+      <div class="wstep root"><div class="wnum" style="background:var(--gold);color:var(--dk)">5</div><div class="wcont"><strong>Causa Raíz:</strong> Ausencia de control de inventario mínimo para kits en dotación.</div></div>
+    </div><div class="csarr"><svg width="36" height="36" viewBox="0 0 40 40"><path d="M8 20h24M26 14l6 6-6 6" stroke="#196989" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg></div>
+    <div class="cspnl"><div class="plbl"><span class="pd" style="background:var(--lb)"></span>Resolución Aplicada</div>
+      <div class="rcard"><div class="rrow"><span class="rk">Clase Novedad</span><span class="rv" style="color:var(--sl)">Kits de Reparto</span></div><div class="rrow"><span class="rk">Indicador</span><span class="rv" style="color:var(--dk)">Kits Reparto (27)</span></div><div class="rrow"><span class="rk">Registros</span><span class="rv" style="color:var(--dk)">99 dev + 85 mod</span></div><div class="rdiv"></div>
+      <div class="rsol"><div class="rsol-l">Solución</div><div class="rsol-t">Se escala con el área de dotación para reposición.</div></div>
+      <div class="rdiv"></div><div class="rrow"><span class="rk">Frecuencia</span><span class="rv tpill" style="background:var(--sl)">393 veces</span></div><div class="rrow"><span class="rk">Efectividad</span><span class="rv tpill" style="background:var(--lbd)">100%</span></div></div>
+    </div></div>
+  </div>
+
+</div>
+
+<div class="footer">HG Visual Dashboard — Datos reales de <strong>5_Por_qués.xlsb</strong> & <strong>Resolución_de_problemas_Front_Line.xlsx</strong> — 2025</div>
+
+<!-- ══════ MODAL FORMULARIO (campos exactos del Excel BASE) ══════ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h2><span>HG</span> — Cuestionario 5 Por Qués</h2>
+      <p>Campos automáticos desde la base de datos del Excel</p>
+    </div>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-body" id="modalBody">
+
+      <!-- SEC 1: DATOS GENERALES -->
+      <div class="fsec"><div class="fsh"><div class="fnum" style="background:var(--dk)">1</div><div><h3>Datos Generales</h3><p style="font-size:.56rem;color:var(--tm)">Campos: Fecha de la novedad, Placa, Coordinador, Negocio</p></div></div>
+        <div class="fbdy">
+          <div class="fld"><label>Fecha de la novedad <span class="rq">*</span></label><input type="date" id="f_fecha" required></div>
+          <div class="r2">
+            <div class="fld"><label>Placa (Si aplica)</label><input type="text" id="f_placa" placeholder="Ej: VEN975, GUR493, COQJX796..."></div>
+            <div class="fld"><label>Tú coordinador <span class="rq">*</span></label>
+              <select id="f_coord"><option value="">Seleccione...</option>
+                <option>Alejandra G.</option><option>Camilo C.</option><option>Cesar L.</option><option>David C.</option><option>Fabian Santos</option><option>Fabio B.</option><option>Jhon M.</option><option>Johan O.</option><option>Julian O.</option><option>Marcos C.</option><option>Olga W.</option><option>Ruben P.</option><option>Sebastian H.</option>
+              </select></div>
+          </div>
+          <div class="r2">
+            <div class="fld"><label>A que negocio pertenece <span class="rq">*</span></label>
+              <select id="f_neg"><option value="">Seleccione...</option>
+                <option>Transporte</option><option>ABI</option><option>Almacén</option>
+              </select></div>
+            <div class="fld"><label>Indicador Afectado <span class="rq">*</span></label>
+              <select id="f_ind"><option value="">Seleccione...</option>
+                <option>Devolución</option><option>Modulaciones</option><option>Entrega en Rango</option><option>Eventos de telemetría</option><option>Llamadas SAC</option><option>Cashless</option><option>RMD</option>
+              </select></div>
+          </div>
+          <div class="fld"><label>Tarea que impacta</label><input type="text" id="f_tarea" placeholder="Ej: Parqueo Seguro, Entrega en rango..."></div>
+        </div>
+      </div>
+
+      <!-- SEC 2: PROBLEMA -->
+      <div class="fsec"><div class="fsh"><div class="fnum" style="background:var(--sl)">2</div><div><h3>Problema a resolver</h3><p style="font-size:.56rem;color:var(--tm)">Describe el problema identificado en detalle</p></div></div>
+        <div class="fbdy">
+          <div class="fld"><label>Problema a resolver <span class="rq">*</span></label><textarea id="f_prob" rows="3" placeholder="Ej: cliente Tienda Juancho cerrado y con demoras en la entrega..."></textarea></div>
+        </div>
+      </div>
+
+      <!-- SEC 3: 5 POR QUÉS -->
+      <div class="fsec"><div class="fsh"><div class="fnum" style="background:var(--gold);color:var(--dk)">5</div><div><h3>Análisis 5 Por Qués</h3><p style="font-size:.56rem;color:var(--tm)">Campos exactos: 1-5 ¿Por qué? + Causa raíz</p></div></div>
+        <div class="fbdy">
+          <div class="fld wf" data-n="1"><label>1. ¿Por qué? <span class="rq">*</span></label><textarea id="f_pq1" rows="2" placeholder="Ej: Porque el establecimiento se encontraba sin atención..."></textarea></div><div class="wfc"></div>
+          <div class="fld wf" data-n="2"><label>2. ¿Por qué? <span class="rq">*</span></label><textarea id="f_pq2" rows="2" placeholder="Ej: Porque hubo retraso del personal encargado..."></textarea></div><div class="wfc"></div>
+          <div class="fld wf" data-n="3"><label>3. ¿Por qué? <span class="rq">*</span></label><textarea id="f_pq3" rows="2" placeholder="Ej: Porque el encargado no llegó a tiempo..."></textarea></div><div class="wfc"></div>
+          <div class="fld wf" data-n="4"><label>4. ¿Por qué? <span class="rq">*</span></label><textarea id="f_pq4" rows="2" placeholder="Ej: Porque no se gestionó reemplazo a tiempo..."></textarea></div><div class="wfc"></div>
+          <div class="fld wf w5" data-n="5"><label>5. ¿Por qué? <span class="rq">*</span></label><textarea id="f_pq5" rows="2" placeholder="Ej: Porque no se monitoreó el horario del personal..."></textarea></div><div class="wfc"></div>
+          <div class="fld rootf" style="padding-left:34px"><label>Causa raíz <span class="rq">*</span></label><textarea id="f_causa" rows="2" placeholder="Ej: Cliente cerrado — falta de monitoreo de horarios..."></textarea></div>
+        </div>
+      </div>
+
+      <!-- SEC 4: CALIFICACIÓN -->
+      <div class="fsec"><div class="fsh"><div class="fnum" style="background:var(--lb)">★</div><div><h3>Califica este formulario según tu experiencia</h3><p style="font-size:.56rem;color:var(--tm)">Valor de 1 a 5</p></div></div>
+        <div class="fbdy" style="align-items:center">
+          <div id="starBox" style="display:flex;gap:6px">
+            <span onclick="setR(1)" style="cursor:pointer;font-size:2.2rem;color:var(--brd);transition:color .15s" data-s="1">★</span>
+            <span onclick="setR(2)" style="cursor:pointer;font-size:2.2rem;color:var(--brd);transition:color .15s" data-s="2">★</span>
+            <span onclick="setR(3)" style="cursor:pointer;font-size:2.2rem;color:var(--brd);transition:color .15s" data-s="3">★</span>
+            <span onclick="setR(4)" style="cursor:pointer;font-size:2.2rem;color:var(--brd);transition:color .15s" data-s="4">★</span>
+            <span onclick="setR(5)" style="cursor:pointer;font-size:2.2rem;color:var(--brd);transition:color .15s" data-s="5">★</span>
+          </div>
+          <div id="starLabel" style="font-size:.7rem;color:var(--tm);margin-top:4px">Selecciona una calificación</div>
+        </div>
+      </div>
+
+      <!-- RESUMEN DE CAMPOS -->
+      <div style="background:var(--dks);border:1px solid var(--brd);border-radius:10px;padding:14px 18px">
+        <div style="font-size:.6rem;font-weight:700;color:var(--dk);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Campos del cuestionario (mapeados del Excel)</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px" id="fieldTags"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-s" onclick="clearForm()">Limpiar</button>
+        <button class="btn btn-p" onclick="submitForm()">Enviar Reporte ➜</button>
+      </div>
+      <div class="success-msg" id="succMsg">
+        <div class="chk">✓</div>
+        <h2>Reporte Enviado Exitosamente</h2>
+        <p>Los datos del cuestionario 5 Por Qués han sido registrados.</p>
+        <div style="margin-top:12px;font-size:.65rem;color:var(--tm)">ID generado: <strong style="color:var(--dk)" id="genId">—</strong></div>
+        <br><button class="btn btn-p" onclick="resetForm()">Nuevo Reporte</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var DK='#232F3D',SL='#196989',LB='#4CC4B0',GD='#FCD039';
+// QR - links to this page with #formulario to auto-open
+var qrUrl = window.location.href.split('#')[0] + '#formulario';
+new QRCode(document.getElementById('qrcode'),{text:qrUrl,width:130,height:130,colorDark:DK,colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
+
+// MODAL
+function openModal(){document.getElementById('modalOverlay').classList.add('show');document.body.style.overflow='hidden';window.location.hash='formulario'}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('show');document.body.style.overflow='';history.replaceState(null,null,' ')}
+document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal()});
+// Auto-open if URL has #formulario
+if(window.location.hash==='#formulario') openModal();
+window.addEventListener('hashchange',function(){if(window.location.hash==='#formulario') openModal()});
+
+// STAR RATING
+var curRating=0;
+function setR(n){curRating=n;document.querySelectorAll('#starBox span').forEach(function(s,i){s.style.color=i<n?'#FCD039':'#e4e9f0'});
+  var labels=['','1 — Muy mala','2 — Mala','3 — Regular','4 — Buena','5 — Excelente'];
+  document.getElementById('starLabel').textContent=labels[n];document.getElementById('starLabel').style.color=DK}
+
+// FIELD TAGS (from Excel columns)
+var excelFields=['Fecha de la novedad','Placa (Si aplica)','Tú coordinador','A que negocio pertenece','Indicador Afectado','Tarea que impacta','Problema a resolver','1. ¿Por qué?','2. ¿Por qué?','3. ¿Por qué?','4. ¿Por qué?','5. ¿Por qué?','Causa raíz','Calificación'];
+var tagBox=document.getElementById('fieldTags');
+excelFields.forEach(function(f,i){var s=document.createElement('span');s.textContent=f;s.style.cssText='display:inline-block;padding:3px 9px;border-radius:6px;font-size:.56rem;font-weight:600;'+
+  (i<6?'background:#232F3D15;color:#232F3D;border:1px solid #232F3D30':i<7?'background:#19698915;color:#196989;border:1px solid #19698930':i<13?'background:#FCD03930;color:#8a6d00;border:1px solid #FCD03960':'background:#4CC4B020;color:#3aab98;border:1px solid #4CC4B040');
+  tagBox.appendChild(s)});
+
+// FORM FUNCTIONS
+function clearForm(){document.querySelectorAll('.modal input,.modal textarea').forEach(function(e){e.value=''});document.querySelectorAll('.modal select').forEach(function(e){e.selectedIndex=0});setR(0);curRating=0;document.getElementById('starLabel').textContent='Selecciona una calificación';document.getElementById('starLabel').style.color='#8899a6'}
+function submitForm(){
+  var id=Math.floor(Math.random()*90000)+10000;
+  document.getElementById('genId').textContent='5PQ-'+id;
+  document.querySelectorAll('.fsec,.btn-row,[id=fieldTags]').forEach(function(e){if(e.closest) e.closest('.fsec,.btn-row,div')&&(e.style.display='none')});
+  document.querySelectorAll('.modal-body > .fsec, .modal-body > .btn-row, .modal-body > div:not(.success-msg)').forEach(function(e){e.style.display='none'});
+  document.getElementById('succMsg').style.display='block'}
+function resetForm(){clearForm();
+  document.querySelectorAll('.modal-body > .fsec, .modal-body > .btn-row, .modal-body > div:not(.success-msg)').forEach(function(e){e.style.display=''});
+  document.getElementById('succMsg').style.display='none'}
+
+// CHART DEFAULTS
+Chart.defaults.color='#4a5568';Chart.defaults.font.family="'Inter',sans-serif";Chart.defaults.font.size=11;
+Chart.defaults.plugins.legend.labels.usePointStyle=true;Chart.defaults.plugins.legend.labels.pointStyle='circle';Chart.defaults.plugins.legend.labels.padding=12;
+
+// PLUGINS
+var topLbl={id:'topLbl',afterDatasetsDraw:function(ch){var cx=ch.ctx;ch.data.datasets.forEach(function(ds,di){var m=ch.getDatasetMeta(di);if(m.hidden)return;m.data.forEach(function(b,i){var v=ds.data[i],p=b.getProps(['x','y']);cx.save();cx.fillStyle=DK;cx.font='bold 11px Inter';cx.textAlign='center';cx.textBaseline='bottom';cx.fillText(typeof v==='number'?(v%1?v.toFixed(1)+'%':v.toLocaleString()):v,p.x,p.y-5);cx.restore()})})}};
+var endLbl={id:'endLbl',afterDatasetsDraw:function(ch){var cx=ch.ctx;ch.data.datasets.forEach(function(ds,di){var m=ch.getDatasetMeta(di);if(m.hidden)return;m.data.forEach(function(b,i){var v=ds.data[i],p=b.getProps(['x','y']);cx.save();cx.fillStyle=DK;cx.font='bold 10px Inter';cx.textAlign='left';cx.textBaseline='middle';cx.fillText(typeof v==='number'?(v%1?v.toFixed(1)+'%':v.toLocaleString()):v,p.x+5,p.y);cx.restore()})})}};
+var dntLbl={id:'dntLbl',afterDatasetsDraw:function(ch){var cx=ch.ctx;ch.data.datasets[0].data.forEach(function(v,i){if(v<2)return;var el=ch.getDatasetMeta(0).data[i],pos=el.tooltipPosition();cx.save();cx.fillStyle='#fff';cx.font='bold 12px Inter';cx.textAlign='center';cx.textBaseline='middle';cx.fillText(v>=10?v.toFixed(1)+'%':v,pos.x,pos.y);cx.restore()})}};
+var dntNum={id:'dntNum',afterDatasetsDraw:function(ch){var cx=ch.ctx;ch.data.datasets[0].data.forEach(function(v,i){var el=ch.getDatasetMeta(0).data[i],pos=el.tooltipPosition();cx.save();cx.fillStyle='#fff';cx.font='bold 13px Inter';cx.textAlign='center';cx.textBaseline='middle';cx.fillText(v,pos.x,pos.y);cx.restore()})}};
+var stkLbl={id:'stkLbl',afterDatasetsDraw:function(ch){var cx=ch.ctx;var tots=[196,184,153,141,139];ch.data.datasets.forEach(function(ds,di){ch.getDatasetMeta(di).data.forEach(function(b,i){var v=ds.data[i],p=b.getProps(['x','y','base']);var h=Math.abs(p.base-p.y);if(h>18){cx.save();cx.fillStyle='#fff';cx.font='bold 11px Inter';cx.textAlign='center';cx.textBaseline='middle';cx.fillText(v,p.x,p.y+h/2);cx.restore()}})});ch.getDatasetMeta(1).data.forEach(function(b,i){var p=b.getProps(['x','y']);cx.save();cx.fillStyle=DK;cx.font='bold 13px Inter';cx.textAlign='center';cx.textBaseline='bottom';cx.fillText(tots[i],p.x,p.y-7);cx.restore()})}};
+
+// CHARTS
+new Chart(document.getElementById('c1'),{type:'doughnut',data:{labels:['Devolución 55.5%','Modulaciones 44.4%','Ev. telemetría 0.1%'],datasets:[{data:[55.52,44.37,0.11],backgroundColor:[SL,GD,LB],borderColor:'#fff',borderWidth:3}]},plugins:[dntLbl],options:{cutout:'55%',plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:8}}}}});
+
+var chMes=new Chart(document.getElementById('c2'),{type:'bar',data:{labels:['Ene','Feb','Mar','Abr','May'],datasets:[{label:'Registros',data:[1086,1117,1123,1020,1259],backgroundColor:[DK,SL,DK,SL,DK],borderRadius:6,barPercentage:.55}]},plugins:[topLbl],options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:1500,grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:10}}},x:{grid:{display:false},ticks:{font:{size:11,weight:'600'}}}}}});
+
+var chAn=new Chart(document.getElementById('c3'),{type:'bar',data:{labels:['Sebastian H.(2)','Ruben P.','Sebastian H.','Marcos C.','Cesar L.','Camilo C.','Fabio B.','David C.'],datasets:[{data:[1211,934,927,910,728,417,265,208],backgroundColor:[LB,'#3aab98',LB,'#3aab98',LB,'#3aab98',LB,'#3aab98'],borderRadius:5,barPercentage:.65}]},plugins:[endLbl],options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,max:1500,grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}}});
+
+new Chart(document.getElementById('c4'),{type:'bar',data:{labels:['Planeación','Kits Reparto','Bees Delivery','People','Demoras ruta','Rechazo','Acarreos','Cambio coord.','Nov. clientes','Dem. cargue','Flota','Cobros adic.','Dotación','Desc. efect.','Nomina','Seguridad'],datasets:[{data:[14.63,13.17,11.71,8.78,8.29,7.32,6.83,5.37,4.88,4.39,4.39,2.93,2.93,1.46,1.46,1.46],backgroundColor:[SL,SL,SL,'#1f7fa5','#1f7fa5','#1f7fa5',LB,LB,LB,LB,'#8dc9bd','#8dc9bd','#8dc9bd','#8dc9bd','#8dc9bd','#8dc9bd'],borderRadius:4,barPercentage:.7}]},plugins:[endLbl],options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,max:22,grid:{display:false},ticks:{callback:function(v){return v+'%'},font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:9}}}}}});
+
+new Chart(document.getElementById('c5'),{type:'doughnut',data:{labels:['Planeación (30)','Kits Reparto (27)','Bees Delivery (24)','People (18)','Demoras ruta (17)'],datasets:[{data:[30,27,24,18,17],backgroundColor:[DK,SL,LB,GD,'#1f7fa5'],borderColor:'#fff',borderWidth:3}]},plugins:[dntNum],options:{cutout:'55%',plugins:{legend:{position:'bottom',labels:{font:{size:9},padding:7}}}}});
+
+new Chart(document.getElementById('c6'),{type:'bar',data:{labels:['GUR493','JRZ159','GUR487','JUN832','VEJ904'],datasets:[{label:'Devolución',data:[120,99,97,98,80],backgroundColor:DK,borderRadius:{topLeft:0,topRight:0,bottomLeft:6,bottomRight:6},borderSkipped:false},{label:'Modulaciones',data:[76,85,56,43,59],backgroundColor:GD,borderRadius:{topLeft:6,topRight:6,bottomLeft:0,bottomRight:0},borderSkipped:false}]},plugins:[stkLbl],options:{plugins:{legend:{labels:{font:{size:11,weight:'600'},padding:14,pointStyle:'rectRounded'}}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:11,weight:'600'},color:DK}},y:{stacked:true,beginAtZero:true,max:230,grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:10},stepSize:40}}}}});
+
+// SANKEY
+(function(){var ind=[{n:'Planeación',v:30,c:DK},{n:'Kits Reparto',v:27,c:SL},{n:'Bees Delivery',v:24,c:LB},{n:'People',v:18,c:GD},{n:'Demoras ruta',v:17,c:'#1f7fa5'}];
+var nov=[{n:'Planeación',v:'14.6%',c:DK},{n:'Kits Reparto',v:'13.2%',c:SL},{n:'Bees Delivery',v:'11.7%',c:LB},{n:'People',v:'8.8%',c:GD},{n:'Demoras ruta',v:'8.3%',c:'#1f7fa5'},{n:'Rechazo',v:'7.3%',c:SL},{n:'Acarreos',v:'6.8%',c:LB},{n:'Flota',v:'4.4%',c:DK}];
+var L=document.getElementById('skyL'),R=document.getElementById('skyR');
+ind.forEach(function(it){var d=document.createElement('div');d.className='sky-n';d.style.cssText='background:'+it.c+'15;color:'+it.c+';border:1.5px solid '+it.c+'55';d.innerHTML='<span class="vl">'+it.v+'</span> '+it.n;L.appendChild(d)});
+nov.forEach(function(it){var d=document.createElement('div');d.className='sky-n';var tc=it.c===GD?'#8a6d00':it.c;d.style.cssText='background:'+it.c+'15;color:'+tc+';border:1.5px solid '+it.c+'55';d.innerHTML=it.n+' <span class="vl">'+it.v+'</span>';R.appendChild(d)});
+requestAnimationFrame(function(){setTimeout(function(){var svg=document.getElementById('skySvg'),mid=document.querySelector('.sky-mid'),mR=mid.getBoundingClientRect(),lN=L.querySelectorAll('.sky-n'),rN=R.querySelectorAll('.sky-n');
+var cn=[{l:0,rs:[0,5,6]},{l:1,rs:[1,7]},{l:2,rs:[2]},{l:3,rs:[3]},{l:4,rs:[4,6]}],p='';
+cn.forEach(function(c){var lE=lN[c.l].getBoundingClientRect(),ly=lE.top+lE.height/2-mR.top;c.rs.forEach(function(ri){if(ri>=rN.length)return;var rE=rN[ri].getBoundingClientRect(),ry=rE.top+rE.height/2-mR.top,cp=mR.width*.42;p+='<path d="M0,'+ly+' C'+cp+','+ly+' '+(mR.width-cp)+','+ry+' '+mR.width+','+ry+'" fill="none" stroke="'+ind[c.l].c+'" stroke-width="2.5" opacity="0.35" stroke-linecap="round"/>'})});
+svg.innerHTML=p},400)})})();
+
+// FILTER
+var md={all:{t:[1086,1117,1123,1020,1259],l:['Ene','Feb','Mar','Abr','May'],s:5605,n:'Todos los meses',sub:'Ene – May 2025'},ene:{t:[1086],l:['Ene'],s:1086,n:'Enero 2025',sub:'Enero 2025'},feb:{t:[1117],l:['Feb'],s:1117,n:'Febrero 2025',sub:'Febrero 2025'},mar:{t:[1123],l:['Mar'],s:1123,n:'Marzo 2025',sub:'Marzo 2025'},abr:{t:[1020],l:['Abr'],s:1020,n:'Abril 2025',sub:'Abril 2025'},may:{t:[1259],l:['May'],s:1259,n:'Mayo 2025',sub:'Mayo 2025'},jun:{t:[205],l:['Jun'],s:205,n:'Junio 2025 (Front Line)',sub:'Junio 2025'}};
+function flt(m,btn){
+  document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('act')});btn.classList.add('act');
+  var d=md[m];document.getElementById('finfo').innerHTML='Mostrando: <strong style="color:#232F3D">'+d.n+'</strong>';
+  document.getElementById('kpiTotal').textContent=d.s.toLocaleString();document.getElementById('kpiSub').textContent=d.sub;
+  chMes.data.labels=d.l;chMes.data.datasets[0].data=d.t;chMes.data.datasets[0].backgroundColor=d.t.map(function(_,i){return i%2===0?DK:SL});chMes.update();
+  if(m!=='all'){var r=d.s/5605;chAn.data.datasets[0].data=[1211,934,927,910,728,417,265,208].map(function(v){return Math.round(v*r)});chAn.update()}else{chAn.data.datasets[0].data=[1211,934,927,910,728,417,265,208];chAn.update()}
+}
+</script>
+</body>
+</html>
