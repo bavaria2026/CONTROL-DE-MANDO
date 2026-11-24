@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDCA OTIF — CD AUTOSUR</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+:root{
+  --g:#FCD039;--gd:#d4ab1a;--gs:rgba(252,208,57,.1);
+  --d:#232F3D;--ds:rgba(35,47,61,.06);
+  --s:#196989;--sa:rgba(25,105,137,.75);--ss:rgba(25,105,137,.08);
+  --t:#4CC4B0;--ta:rgba(76,196,176,.75);--ts:rgba(76,196,176,.1);
+  --bg:#f4f5f7;--c:#fff;--tx:#232F3D;--m:#7a8a9b;--b:#e3e7ec;
+  --r:#ef4444;--ra:rgba(239,68,68,.65);--rs:rgba(239,68,68,.06);
+  --gn:#22c55e;--o:#f59e0b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--tx)}
+
+/* === HEADER === */
+.hdr{background:linear-gradient(135deg,#1a2e42 0%,var(--s) 100%);color:#fff;padding:0}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;padding:20px 28px 12px;flex-wrap:wrap;gap:12px}
+.hdr-brand{display:flex;align-items:center;gap:14px}
+.hdr-logo{width:44px;height:44px;border-radius:12px;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;color:var(--d)}
+.hdr-title h1{font-size:1.2rem;font-weight:800;letter-spacing:.3px}
+.hdr-title p{font-size:.7rem;opacity:.6;font-weight:500;margin-top:1px}
+.hdr-filters{display:flex;gap:8px;flex-wrap:wrap}
+.hdr-pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:6px 16px;font-size:.68rem;font-weight:700;color:#fff;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:5px}
+.hdr-pill:hover{background:rgba(255,255,255,.18)}
+.hdr-pill.active{background:var(--g);color:var(--d);border-color:var(--g)}
+.hdr-pill .dot{width:6px;height:6px;border-radius:50%}
+
+/* === HALF TOGGLE === */
+.half-toggle{display:flex;justify-content:center;padding:14px 28px 16px;gap:0}
+.ht-btn{padding:10px 32px;font-size:.78rem;font-weight:800;border:none;cursor:pointer;transition:.2s;font-family:inherit;letter-spacing:.5px}
+.ht-btn:first-child{border-radius:10px 0 0 10px}
+.ht-btn:last-child{border-radius:0 10px 10px 0}
+.ht-btn.off{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5)}
+.ht-btn.on{background:var(--g);color:var(--d);box-shadow:0 2px 12px rgba(252,208,57,.3)}
+
+/* === PHASE TABS === */
+.ptabs{display:flex;padding:0 28px 0;gap:4px;overflow-x:auto}
+.ptabs::-webkit-scrollbar{height:0}
+.ptab{background:rgba(255,255,255,.06);border:none;color:rgba(255,255,255,.5);padding:9px 18px;font-size:.7rem;font-weight:700;cursor:pointer;border-radius:8px 8px 0 0;transition:.2s;font-family:inherit;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.ptab:hover{background:rgba(255,255,255,.12);color:rgba(255,255,255,.8)}
+.ptab.active{background:var(--bg);color:var(--d)}
+.ptab .pdot{width:7px;height:7px;border-radius:50%}
+
+/* === CONTENT === */
+.wrap{max-width:1500px;margin:0 auto;padding:0 24px 24px}
+.sec{display:none;animation:fi .3s}
+.sec.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* Phase header bar */
+.phb{display:flex;align-items:center;gap:14px;padding:20px 0 18px}
+.phb-icon{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;flex-shrink:0;color:#fff}
+.phb h2{font-size:1.1rem;font-weight:800}
+.phb p{font-size:.74rem;color:var(--m);font-weight:500}
+
+/* CARDS */
+.cd{background:var(--c);border-radius:14px;padding:16px 18px;margin-bottom:10px;box-shadow:0 1px 6px var(--ds);border:1px solid var(--b)}
+.ch{font-size:.68rem;font-weight:800;color:var(--s);margin-bottom:10px;text-transform:uppercase;letter-spacing:.7px;display:flex;align-items:center;gap:8px}
+.ch::before{content:'';width:4px;height:12px;border-radius:2px;background:var(--g)}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.gf{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+@media(max-width:1100px){.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:860px){.g2,.g3,.g4{grid-template-columns:1fr}}
+
+/* COMPACT CHARTS */
+.cd canvas{max-height:200px}
+.cd.cd-sm{padding:14px 16px}
+.cd.cd-sm .ch{margin-bottom:8px;font-size:.68rem}
+
+/* STAT TILES */
+.st{background:var(--c);border-radius:12px;padding:14px 16px;text-align:center;border:1px solid var(--b);position:relative;overflow:hidden}
+.st::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.st .sl{font-size:.55rem;color:var(--m);text-transform:uppercase;font-weight:700;letter-spacing:.5px;margin-bottom:4px}
+.st .sv{font-size:1.4rem;font-weight:900}
+.st .ss{font-size:.62rem;color:var(--m);margin-top:2px;font-weight:500}
+.st.t-s::before{background:var(--s)}.st.t-s .sv{color:var(--s)}
+.st.t-t::before{background:var(--t)}.st.t-t .sv{color:#1f9e87}
+.st.t-g::before{background:var(--g)}.st.t-g .sv{color:var(--gd)}
+.st.t-d::before{background:var(--d)}.st.t-d .sv{color:var(--d)}
+.st.t-r::before{background:var(--r)}.st.t-r .sv{color:var(--r)}
+.st.t-gn::before{background:var(--gn)}.st.t-gn .sv{color:#16a34a}
+
+/* TABLES */
+.tw{overflow-x:auto;border-radius:10px}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:.74rem}
+th{background:var(--d);color:#fff;padding:9px 10px;text-align:center;font-weight:700;font-size:.62rem;text-transform:uppercase;letter-spacing:.5px;position:sticky;top:0}
+th:first-child{border-radius:10px 0 0 0}th:last-child{border-radius:0 10px 0 0}
+td{padding:7px 10px;text-align:center;border-bottom:1px solid var(--b)}
+tr:nth-child(even){background:#f8f9fb}
+tr:hover td{background:var(--ts)}
+.tbl-s th{background:var(--s)}
+
+/* KPI mini */
+.km{background:var(--c);border:1px solid var(--b);border-radius:10px;padding:10px 12px;text-align:center;border-left:4px solid var(--s);transition:.15s;min-width:0}
+.km:hover{transform:translateY(-1px);box-shadow:0 3px 10px var(--ds)}
+.km .kt{font-size:.55rem;color:var(--m);font-weight:700;text-transform:uppercase;letter-spacing:.3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.km .kvr{display:flex;gap:12px;justify-content:center;margin-top:4px}
+.km .kv{font-size:.78rem;font-weight:800}
+.km .kl{font-size:.5rem;color:var(--m);font-weight:600}
+.km.b-g{border-left-color:var(--g)}.km.b-t{border-left-color:var(--t)}.km.b-r{border-left-color:var(--r)}.km.b-s{border-left-color:var(--s)}.km.b-gn{border-left-color:var(--gn)}
+.krow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:10px}
+
+/* STATUS */
+.sb{padding:3px 9px;border-radius:16px;font-size:.58rem;font-weight:800;display:inline-block}
+.sb.ok{background:#dcfce7;color:#166534}.sb.pn{background:#fef3cd;color:#856404}.sb.bl{background:#fee2e2;color:#991b1b}
+
+/* SWOT */
+.swg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:700px){.swg{grid-template-columns:1fr}}
+.sw{border-radius:12px;padding:16px}
+.sw h4{font-size:.74rem;font-weight:800;margin-bottom:8px}
+.sw ul{list-style:none;padding:0;font-size:.74rem}.sw li{padding:3px 0;border-bottom:1px solid rgba(0,0,0,.04)}.sw li::before{content:'→ ';font-weight:700}
+.sw.ss{background:rgba(76,196,176,.08);border:1px solid rgba(76,196,176,.2)}.sw.ss h4{color:#1a8a70}
+.sw.ww{background:var(--rs);border:1px solid rgba(239,68,68,.15)}.sw.ww h4{color:var(--r)}
+.sw.oo{background:var(--ss);border:1px solid rgba(25,105,137,.15)}.sw.oo h4{color:var(--s)}
+.sw.tt{background:var(--gs);border:1px solid rgba(252,208,57,.3)}.sw.tt h4{color:#9a7b0a}
+
+/* SDCA */
+.sdca{background:var(--ts);border:1px solid rgba(76,196,176,.2);border-radius:12px;padding:14px 18px;margin-bottom:10px}
+.sdca h4{font-size:.76rem;font-weight:800;color:var(--s);margin-bottom:6px}.sdca p{font-size:.78rem;line-height:1.55}
+
+/* GANTT */
+.gn-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--b);font-size:.72rem}
+.gn-lbl{width:180px;font-weight:600;flex-shrink:0;font-size:.68rem}
+.gn-track{flex:1;height:20px;background:var(--ds);border-radius:4px;position:relative;overflow:hidden}
+.gn-bar{height:100%;border-radius:4px;position:absolute;top:0}
+.gn-plan{background:rgba(25,105,137,.2)}.gn-act{background:var(--s)}
+.gn-pct{position:absolute;right:5px;top:2px;font-size:.56rem;color:#fff;font-weight:800}
+
+/* PROB BOX */
+.prob{background:linear-gradient(135deg,var(--d),var(--s));color:#fff;border-radius:14px;padding:22px 26px;margin-bottom:14px}
+.prob .hl{color:var(--g);font-weight:800}
+.prob p{font-size:.86rem;font-weight:600;line-height:1.65}
+
+.cat-t{font-size:.58rem;font-weight:800;color:#fff;padding:4px 14px;border-radius:16px;display:inline-block;letter-spacing:.5px}
+
+.footer{text-align:center;padding:20px;color:var(--m);font-size:.64rem}
+</style>
+</head>
+<body>
+
+<!-- =================== HEADER =================== -->
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="hdr-brand">
+      <div class="hdr-logo">AS</div>
+      <div class="hdr-title"><h1>PDCA OTIF — CD AUTOSUR</h1><p>Ciclo de Deming · T2 Logística · 2026</p></div>
+    </div>
+    <div class="hdr-filters">
+      <div class="hdr-pill"><span>📍</span> CD Autosur</div>
+      <div class="hdr-pill"><span>📊</span> OTIF</div>
+      <div class="hdr-pill"><span>📅</span> 2026</div>
+    </div>
+  </div>
+
+  <div class="half-toggle">
+    <button class="ht-btn on" id="btnH1" onclick="toggleHalf(1)">H1 · Ene–Jun</button>
+    <button class="ht-btn off" id="btnH2" onclick="toggleHalf(2)">H2 · Jul–Dic</button>
+  </div>
+
+  <div class="ptabs" id="ptabs">
+    <button class="ptab active" onclick="go('overview',this)"><div class="pdot" style="background:var(--g)"></div>Resumen</button>
+    <button class="ptab" onclick="go('p_problem',this)"><div class="pdot" style="background:var(--s)"></div>Plan · Problema</button>
+    <button class="ptab" onclick="go('p_base',this)"><div class="pdot" style="background:var(--s)"></div>Plan · Línea Base</button>
+    <button class="ptab" onclick="go('p_kpi',this)"><div class="pdot" style="background:var(--s)"></div>Plan · KPI Tree</button>
+    <button class="ptab" onclick="go('d_actions',this)"><div class="pdot" style="background:var(--t)"></div>Do · Acciones</button>
+    <button class="ptab" onclick="go('d_exec',this)"><div class="pdot" style="background:var(--t)"></div>Do · Ejecución</button>
+    <button class="ptab" onclick="go('c_results',this)"><div class="pdot" style="background:var(--g)"></div>Check · Resultados</button>
+    <button class="ptab" onclick="go('c_disper',this)"><div class="pdot" style="background:var(--g)"></div>Check · Dispersión</button>
+    <button class="ptab" onclick="go('a_sdca',this)"><div class="pdot" style="background:var(--d)"></div>Act · SDCA</button>
+    <button class="ptab" onclick="go('a_swot',this)"><div class="pdot" style="background:var(--d)"></div>Act · SWOT</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- =================== OVERVIEW =================== -->
+<div class="sec active" id="overview">
+  <div class="phb"><div class="phb-icon" style="background:var(--g);color:var(--d);">⟳</div><div><h2>Dashboard PDCA — <span id="hLabel">H1 Ene–Jun 2026</span></h2><p>Vista general del ciclo de mejora continua OTIF</p></div></div>
+
+  <div class="gf" id="overviewTiles"></div>
+
+  <div class="g4" style="margin-top:10px">
+    <div class="cd cd-sm"><div class="ch">OTIF Gap % <span id="hRange1"></span></div><canvas id="cOver1"></canvas></div>
+    <div class="cd cd-sm"><div class="ch">Vol. Ordenado (khl)</div><canvas id="cOver2"></canvas></div>
+    <div class="cd cd-sm"><div class="ch">OT Gap vs IF Gap %</div><canvas id="cOver3"></canvas></div>
+    <div class="cd cd-sm"><div class="ch">Pérdidas (khl)</div><canvas id="cOver4"></canvas></div>
+  </div>
+</div>
+
+<!-- =================== PLAN: PROBLEM =================== -->
+<div class="sec" id="p_problem">
+  <div class="phb"><div class="phb-icon" style="background:var(--s)">P</div><div><h2>PLAN — Problem Statement</h2><p>Identificar y definir el problema con objetivos medibles</p></div></div>
+  <div class="prob">
+    <div class="ch" style="color:var(--g)">Descripción del Problema</div>
+    <p>Indicador <span class="hl">OTIF fuera de meta</span> — CD Autosur muestra GAP significativo vs objetivo en ambos semestres. On Time presenta la mayor oportunidad con valores de <span class="hl" id="pOTGap"></span>. Se requiere plan de acción integral para alcanzar la meta de <span class="hl">90%</span>.</p>
+  </div>
+  <div class="cd"><div class="ch">Objetivo y Método</div>
+    <div class="gf" style="margin-bottom:10px">
+      <div><span class="st sl">Objetivo</span><br><span style="font-weight:700">OTIF > 90%</span></div>
+      <div><span class="st sl">KPI</span><br><span style="font-weight:700">OTIF</span></div>
+      <div><span class="st sl">PIs</span><br><span style="font-weight:700">On Time, In Full, Rechazos, Stock Out</span></div>
+    </div>
+    <div style="background:var(--ts);border:1px solid rgba(76,196,176,.2);border-radius:10px;padding:12px 16px;font-size:.8rem;font-weight:600;color:var(--s)">
+      <strong>Fórmula:</strong> OTIF = (1 − OTIF Gap%) = (1 − On Time Gap%) × (1 − In Full Gap%)
+    </div>
+    <div class="gf" style="margin-top:14px" id="problemTiles"></div>
+  </div>
+  <div class="cd"><div class="ch">Equipo de Trabajo</div>
+    <div class="gf">
+      <div style="display:flex;align-items:center;gap:10px;background:var(--ts);padding:10px 14px;border-radius:10px"><div style="width:34px;height:34px;border-radius:50%;background:var(--s);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800">CL</div><div><div style="font-size:.8rem;font-weight:700">Coord. Logístico</div><div style="font-size:.66rem;color:var(--m)">Responsable</div></div></div>
+      <div style="display:flex;align-items:center;gap:10px;background:var(--ts);padding:10px 14px;border-radius:10px"><div style="width:34px;height:34px;border-radius:50%;background:var(--s);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800">JO</div><div><div style="font-size:.8rem;font-weight:700">Jefe Operaciones</div><div style="font-size:.66rem;color:var(--m)">Líder</div></div></div>
+      <div style="display:flex;align-items:center;gap:10px;background:var(--ts);padding:10px 14px;border-radius:10px"><div style="width:34px;height:34px;border-radius:50%;background:var(--s);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800">CT</div><div><div style="font-size:.8rem;font-weight:700">Coord. Transporte</div><div style="font-size:.66rem;color:var(--m)">Participante</div></div></div>
+      <div style="display:flex;align-items:center;gap:10px;background:var(--ts);padding:10px 14px;border-radius:10px"><div style="width:34px;height:34px;border-radius:50%;background:var(--s);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800">CA</div><div><div style="font-size:.8rem;font-weight:700">Coord. Almacén</div><div style="font-size:.66rem;color:var(--m)">Participante</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== PLAN: BASELINE =================== -->
+<div class="sec" id="p_base">
+  <div class="phb"><div class="phb-icon" style="background:var(--s)">P</div><div><h2>PLAN — Línea Base</h2><p>Análisis histórico para identificar patrones y causas</p></div></div>
+  <div class="cd"><div class="ch">OTIF Gap % — Detalle Mensual</div><div class="tw"><table><thead><tr><th>Mes</th><th>OTIF Gap%</th><th>On Time Gap%</th><th>In Full Gap%</th><th>Stock Out%</th><th>Refusal (khl)</th></tr></thead><tbody id="tBase"></tbody></table></div></div>
+  <div class="g2">
+    <div class="cd cd-sm"><div class="ch">Componentes OTIF Gap</div><canvas id="cBase1"></canvas></div>
+    <div class="cd cd-sm"><div class="ch">Stock Out vs Refusal (khl)</div><canvas id="cBase2"></canvas></div>
+  </div>
+</div>
+
+<!-- =================== PLAN: KPI TREE =================== -->
+<div class="sec" id="p_kpi">
+  <div class="phb"><div class="phb-icon" style="background:var(--s)">P</div><div><h2>PLAN — KPI Tree</h2><p>Descomposición del OTIF en indicadores de proceso</p></div></div>
+  <div class="cd">
+    <div class="ch">Árbol de Indicadores OTIF — <span id="kpiHalf"></span></div>
+    <div style="text-align:center;margin-bottom:22px">
+      <div style="display:inline-block;background:linear-gradient(135deg,var(--d),var(--s));color:#fff;border-radius:14px;padding:18px 40px;border:3px solid var(--g);box-shadow:0 6px 24px rgba(35,47,61,.2)">
+        <div style="font-size:.58rem;color:var(--g);font-weight:800;letter-spacing:1.2px">OTIF GAP %</div>
+        <div style="font-size:2rem;font-weight:900" id="kpiRoot"></div>
+        <div style="font-size:.66rem;opacity:.7">Meta: &lt; 10% | Período: <span id="kpiPer"></span></div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:40px;margin-bottom:22px;flex-wrap:wrap">
+      <div style="text-align:center"><div style="width:3px;height:16px;background:var(--g);margin:0 auto 6px;border-radius:2px"></div>
+        <div class="km b-r" style="min-width:180px"><div class="kt">ON TIME GAP %</div><div class="kvr"><div><div class="kv" style="color:var(--r)" id="kpiOT"></div><div class="kl">PROMEDIO</div></div><div><div class="kv" style="color:var(--t)">< 7%</div><div class="kl">META</div></div></div></div></div>
+      <div style="text-align:center"><div style="width:3px;height:16px;background:var(--g);margin:0 auto 6px;border-radius:2px"></div>
+        <div class="km b-g" style="min-width:180px"><div class="kt">IN FULL GAP %</div><div class="kvr"><div><div class="kv" style="color:var(--o)" id="kpiIF"></div><div class="kl">PROMEDIO</div></div><div><div class="kv" style="color:var(--t)">< 4%</div><div class="kl">META</div></div></div></div></div>
+    </div>
+    <div style="text-align:center;margin-bottom:8px"><span class="cat-t" style="background:var(--s)">GESTIÓN</span></div>
+    <div class="krow" id="kpiGestion"></div>
+    <div style="text-align:center;margin-bottom:8px"><span class="cat-t" style="background:var(--t);color:var(--d)">OPERACIONAL</span></div>
+    <div class="krow" id="kpiOper1"></div>
+    <div class="krow" id="kpiOper2"></div>
+  </div>
+</div>
+
+<!-- =================== DO: ACTIONS =================== -->
+<div class="sec" id="d_actions">
+  <div class="phb"><div class="phb-icon" style="background:var(--t);color:var(--d)">D</div><div><h2>DO — Plan de Acción</h2><p>Implementar acciones correctivas y preventivas para cerrar el GAP</p></div></div>
+  <div class="cd"><div class="ch">Acciones</div><div class="tw"><table><thead><tr><th>#</th><th>Origen</th><th>¿Qué?</th><th>¿Quién?</th><th>¿Cómo?</th><th>Sem.</th><th>Estatus</th><th>Indicador</th></tr></thead><tbody>
+    <tr><td>1</td><td>Causa Raíz</td><td style="text-align:left">Reducir Stock Out mejorando forecast accuracy</td><td>Coord. Log.</td><td style="text-align:left">Reuniones semanales forecast por SKU</td><td>S7–52</td><td><span class="sb pn">En curso</span></td><td>SO% &lt;1.5%</td></tr>
+    <tr><td>2</td><td>Causa Raíz</td><td style="text-align:left">Disminuir Refusal con control despacho</td><td>Coord. Tr.</td><td style="text-align:left">Checklist despacho + llamada previa</td><td>S7–30</td><td><span class="sb pn">En curso</span></td><td>Ref &lt;1.8khl</td></tr>
+    <tr><td>3</td><td>GOP</td><td style="text-align:left">Mejorar On Time: control cargue 6AM</td><td>Coord. Tr.</td><td style="text-align:left">KPI diario eficiencia cargue 6AM</td><td>S7–52</td><td><span class="sb pn">En curso</span></td><td>OT Gap &lt;7%</td></tr>
+    <tr><td>4</td><td>GOP</td><td style="text-align:left">Optimización de rutas y modulación</td><td>Jefe Ops.</td><td style="text-align:left">Herramienta de ruteo, revisión adherencia</td><td>S10–40</td><td><span class="sb pn">En curso</span></td><td>Efic &gt;95%</td></tr>
+    <tr><td>5</td><td>GOP</td><td style="text-align:left">Reducir errores alistamiento</td><td>Coord. Alm.</td><td style="text-align:left">Doble verificación picking, señalización</td><td>S8–26</td><td><span class="sb ok">Completado</span></td><td>WH Qly &lt;30ppm</td></tr>
+    <tr><td>6</td><td>Análisis</td><td style="text-align:left">Fleet availability y mto preventivo</td><td>Coord. Tr.</td><td style="text-align:left">Plan mto preventivo, control pernoctas</td><td>S10–52</td><td><span class="sb pn">En curso</span></td><td>Fleet &gt;94%</td></tr>
+  </tbody></table></div></div>
+  <div class="cd"><div class="ch">Gantt — Avance de Acciones</div><div id="gantt"></div></div>
+</div>
+
+<!-- =================== DO: EXECUTION =================== -->
+<div class="sec" id="d_exec">
+  <div class="phb"><div class="phb-icon" style="background:var(--t);color:var(--d)">D</div><div><h2>DO — KPIs de Ejecución</h2><p>Seguimiento a indicadores operacionales durante implementación</p></div></div>
+  <div class="cd"><div class="ch">KPIs Operacionales — AC vs LY</div><div class="tw"><table><thead><tr id="execTH"></tr></thead><tbody id="tExec"></tbody></table></div></div>
+  <div class="g4">
+    <div class="cd cd-sm"><div class="ch">Volumen (hl)</div><canvas id="cExec1"></canvas></div>
+    <div class="cd cd-sm"><div class="ch">WH Prod (hl/h)</div><canvas id="cExec2"></canvas></div>
+    <div class="cd cd-sm"><div class="ch">Quality (ppm)</div><canvas id="cExec3"></canvas></div>
+    <div class="cd cd-sm"><div class="ch">Transport (pck/h)</div><canvas id="cExec4"></canvas></div>
+  </div>
+</div>
+
+<!-- =================== CHECK: RESULTS =================== -->
+<div class="sec" id="c_results">
+  <div class="phb"><div class="phb-icon" style="background:var(--g);color:var(--d)">C</div><div><h2>CHECK — Resultados</h2><p>Verificar efectividad de las acciones comparando resultado vs objetivo</p></div></div>
+  <div class="cd cd-sm"><div class="ch">OTIF Gap % — Resultado Mensual</div><canvas id="cRes1"></canvas></div>
+  <div class="gf" id="resTiles"></div>
+  <div class="cd" style="margin-top:14px"><div class="ch">Detalle Mensual</div><div class="tw"><table><thead><tr><th>Mes</th><th>OTIF Gap%</th><th>Meta &lt;10%</th><th>OT Gap%</th><th>IF Gap%</th><th>Cumple</th></tr></thead><tbody id="tRes"></tbody></table></div></div>
+</div>
+
+<!-- =================== CHECK: DISPERSION =================== -->
+<div class="sec" id="c_disper">
+  <div class="phb"><div class="phb-icon" style="background:var(--g);color:var(--d)">C</div><div><h2>CHECK — Dispersión</h2><p>Correlación entre variables de proceso y resultado OTIF</p></div></div>
+  <div class="g3">
+    <div class="cd cd-sm"><div class="ch">Refusal vs OT Gap%</div><canvas id="cDisp1"></canvas></div>
+    <div class="cd cd-sm"><div class="ch">Stock Out vs IF Gap%</div><canvas id="cDisp2"></canvas></div>
+    <div class="cd cd-sm"><div class="ch">Vol. Ord vs OTIF Gap%</div><canvas id="cDisp3"></canvas></div>
+  </div>
+</div>
+
+<!-- =================== ACT: SDCA =================== -->
+<div class="sec" id="a_sdca">
+  <div class="phb"><div class="phb-icon" style="background:var(--d)">A</div><div><h2>ACT — SDCA</h2><p>Estandarizar acciones exitosas para sostener la mejora</p></div></div>
+  <div class="cd"><div class="ch">Ciclo SDCA</div>
+    <div class="g2" style="margin-bottom:10px"><div class="sdca"><h4>S — Estandarizar</h4><p>Documentar nuevos estándares: checklist despacho, protocolo llamada previa, frecuencia forecast, procedimiento picking doble.</p></div><div class="sdca"><h4>D — Hacer</h4><p>Capacitar al 100% del personal en los nuevos estándares. Cronograma mensual con evaluación y seguimiento en campo.</p></div></div>
+    <div class="g2"><div class="sdca"><h4>C — Verificar</h4><p>Monitoreo semanal de cumplimiento con auditorías internas y alertas automáticas cuando un KPI sale de rango.</p></div><div class="sdca"><h4>A — Actuar</h4><p>Si los indicadores se desvían: protocolo de escalamiento. Si se mantienen: documentar lecciones y replicar en otros CDs.</p></div></div>
+  </div>
+  <div class="cd"><div class="ch">Plan de Estandarización</div><div class="tw"><table><thead><tr><th>Acción</th><th>Estándar</th><th>Dueño</th><th>Personal</th><th>Fecha</th><th>Estatus</th></tr></thead><tbody>
+    <tr><td style="text-align:left">Checklist despacho obligatorio</td><td>WD-LOG-001</td><td>Coord. Tr.</td><td>Aux. despacho</td><td>S10</td><td><span class="sb ok">Completado</span></td></tr>
+    <tr><td style="text-align:left">Protocolo llamada previa</td><td>WD-LOG-002</td><td>Coord. Tr.</td><td>Conductores</td><td>S12</td><td><span class="sb pn">En curso</span></td></tr>
+    <tr><td style="text-align:left">Reunión semanal forecast</td><td>WD-PLN-001</td><td>Coord. Log.</td><td>Planificadores</td><td>S8</td><td><span class="sb ok">Completado</span></td></tr>
+    <tr><td style="text-align:left">Doble verificación picking</td><td>WD-ALM-001</td><td>Coord. Alm.</td><td>Pickers</td><td>S9</td><td><span class="sb ok">Completado</span></td></tr>
+    <tr><td style="text-align:left">Control eficiencia cargue 6AM</td><td>WD-TRN-001</td><td>Coord. Tr.</td><td>Supervisores</td><td>S7</td><td><span class="sb ok">Completado</span></td></tr>
+  </tbody></table></div></div>
+</div>
+
+<!-- =================== ACT: SWOT =================== -->
+<div class="sec" id="a_swot">
+  <div class="phb"><div class="phb-icon" style="background:var(--d)">A</div><div><h2>ACT — SWOT</h2><p>Factores para sostenibilidad de la mejora</p></div></div>
+  <div class="cd"><div class="ch">Análisis SWOT — CD Autosur</div>
+    <div class="swg">
+      <div class="sw ss"><h4>FORTALEZAS</h4><ul><li>Volumen AC 2026 supera LY todos los meses</li><li>WH Productivity mejorando (8.83 vs 8.50 hl/h Sep)</li><li>Delivery Quality mejorada (20 vs 33 ppm Oct)</li><li>Transport Prod. +37% vs LY (65 vs 48 pck/h Oct)</li><li>In Full Gap controlado (&lt;3% promedio H2)</li></ul></div>
+      <div class="sw ww"><h4>DEBILIDADES</h4><ul><li>On Time Gap variable (hasta 19.6% en May)</li><li>Refusal sostenido (2.0–3.6 khl/mes)</li><li>OTIF Gap pico de 21.8% en Mayo</li><li>Sales Curve Index inestable</li><li>Capacity Occupation cayó en Jul (681 pck/T)</li></ul></div>
+      <div class="sw oo"><h4>OPORTUNIDADES</h4><ul><li>Herramienta de ruteo para optimizar entregas</li><li>Alineación forecast comercial-logística</li><li>Capacity Occ se recuperó fuerte H2 (945+ pck/T)</li><li>Benchmark cluster &gt;93% como referencia</li><li>Total Productivity creciente (+8% vs LY)</li></ul></div>
+      <div class="sw tt"><h4>AMENAZAS</h4><ul><li>Estacionalidad impacta alta demanda Nov-Dic</li><li>Clima afecta accesibilidad de rutas</li><li>Presión costos limita inversión flota</li><li>Turnover logístico en aumento (2.3% Oct)</li><li>Crédito clientes genera cancelaciones</li></ul></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<div class="footer">PDCA OTIF — CD Autosur 2026 | Ciclo de Deming | T2 Logística | Datos: Anaplan SL + Libro2</div>
+
+<script>
+Chart.register(ChartDataLabels);
+const ML=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+// ===== FULL YEAR DATA (12 months - from SL file) =====
+// These are GAP% (higher = worse), so OTIF = 100 - gap
+const otifGap={ly:[11.92,5.28,5.0,5.44,8.89,12.09,10.6,11.82,9.04,11.3,33.65,36.28],ac:[5.16,11.77,9.58,13.93,21.81,9.26,11.92,8.44,6.69,2.39,0,0],bu:[11.02,5.6,5.25,5.85,8.89,12.57,10.71,11.71,9.65,11.48,30.74,35.09]};
+const otGap={ly:[5.83,2.17,2.07,2.39,5.41,9.1,7.32,7.87,5.77,7.86,28.98,33.19],ac:[0,9.12,7.58,12.27,19.64,7.26,9.68,6.24,4.78,0,0,0],bu:[5.82,2.16,2.06,2.38,5.4,8.6,7.12,7.67,5.76,7.66,27.31,31.52]};
+const ifGap={ly:[6.47,3.19,2.99,3.13,3.68,3.29,3.53,4.28,3.47,3.74,6.57,4.62],ac:[5.16,2.92,2.17,1.89,2.71,2.15,2.48,2.34,2.01,2.39,0,0],bu:[5.51,3.52,3.25,3.56,3.69,4.35,3.86,4.38,4.13,4.14,4.71,5.21]};
+const soP={ly:[1.3,0.8,0.58,0.77,0.93,0.41,0.45,1.06,0.68,1.0,3.29,0.95],ac:[1.38,0.71,0.36,0.26,0.46,0.4,0.62,0.64,0.43,0.74,0,0]};
+const refKhl={ly:[2.99,1.92,2.14,2.37,2.96,2.96,3.4,3.47,3.11,3.17,4.34,4.4],ac:[3.6,2.04,1.81,1.75,2.6,2.1,2.49,2.07,1.92,2.24,0,0]};
+const volOrd={ly:[109.13,96.48,108.58,113.86,124.0,118.07,123.22,118.41,126.52,128.24,138.78,145.73],ac:[115.13,102.27,118.46,120.85,130.86,132.35,140.16,125.42,128.15,143.12,0,0]};
+const soKhl={ly:[1.41,0.77,0.63,0.87,1.15,0.48,0.55,1.25,0.87,1.28,4.57,1.38],ac:[1.59,0.72,0.43,0.31,0.6,0.52,0.87,0.8,0.55,1.05,0,0]};
+
+// DC KPIs (from Libro2)
+const vol={ac:[109751,99717,116422,119121,127974,130190,137410,123168,126327,140621,0,0],ly:[99737,93889,105921,110738,126102,114529,119503,114299,123059,124527,130624,140050]};
+const whP={ac:[7.18,6.71,8.08,7.93,7.92,7.38,8.27,8.08,8.83,9.19,0,0],ly:[6.56,6.66,7.69,8.07,8.49,8.01,8.17,8.08,8.5,8.68,9.57,8.84]};
+const tqI={ac:[71.49,59.25,55.92,101.61,43.79,41.57,46.81,54.17,52.6,44.71,0,0],ly:[85.27,73.0,20.2,89.23,21.84,33.72,61.14,73.08,67.67,66.99,69.79,61.33]};
+const trP={ac:[56.66,53.5,53.5,68.65,67.8,68.71,56.1,62.36,67.52,65.07,0,0],ly:[49.03,57.63,62.78,64.46,57.63,51.34,50.66,48.45,46.37,47.57,56.61,52.4]};
+const sci={ac:[20.2,16.29,18.11,22.34,16.08,19.83,15.95,37.98,9.95,12.25,0,0],ly:[18.6,24.5,25.96,19.36,19.04,28.78,20.85,18.36,18.41,16.99,11.95,24.68]};
+const capOcc={ac:[863,824,770,892,892,940,681,954,947,945,0,0],ly:[846,821,850,834,834,842,843,808,776,833,861,900]};
+const dropSz={ac:[56.36,51.86,48.64,61.94,61.5,74.26,44.34,59.04,58.28,60.58,0,0],ly:[51.56,47.82,51.62,52.13,52.46,55.06,53.78,51.91,54.36,54.03,57.69,71.57]};
+const avgDist={ac:[27.02,27.5,27.09,26.0,25.06,17.36,17.39,18.13,17.81,18.16,0,0],ly:[27.7,27.54,27.11,27.29,26.39,26.61,27.04,26.77,25.13,26.26,28.04,24.88]};
+
+// ===== STATE =====
+let H=1; // 1=H1, 2=H2
+function hSlice(){return H===1?[0,6]:[6,12]}
+function hMonths(){const[a,b]=hSlice();return ML.slice(a,b)}
+function hData(arr){const[a,b]=hSlice();return arr.slice(a,b)}
+function hAvg(arr){const d=hData(arr).filter(v=>v>0);return d.length?d.reduce((a,b)=>a+b,0)/d.length:0}
+
+// ===== NAV =====
+function go(id,btn){document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active'));document.getElementById(id).classList.add('active');btn.classList.add('active');window.scrollTo(0,0)}
+
+function toggleHalf(h){H=h;document.getElementById('btnH1').className='ht-btn '+(h===1?'on':'off');document.getElementById('btnH2').className='ht-btn '+(h===2?'on':'off');render()}
+
+// ===== CHART HELPERS =====
+const NG={grid:{display:false},border:{display:false}};
+const DLoff={datalabels:{display:false}};
+const DL=(c,f)=>({datalabels:{display:true,color:c||'#232F3D',font:{weight:700,size:8},formatter:f||(v=>v),anchor:'end',align:'top',offset:1,padding:1}});
+const C={g:'#FCD039',ga:'rgba(252,208,57,.6)',gs:'rgba(252,208,57,.12)',d:'#232F3D',da:'rgba(35,47,61,.6)',ds:'rgba(35,47,61,.1)',s:'#196989',sa:'rgba(25,105,137,.7)',ss:'rgba(25,105,137,.1)',t:'#4CC4B0',ta:'rgba(76,196,176,.7)',ts:'rgba(76,196,176,.1)',r:'#ef4444',ra:'rgba(239,68,68,.6)',gn:'#22c55e'};
+
+let charts={};
+function mkChart(id,cfg){if(charts[id]){charts[id].destroy()}charts[id]=new Chart(document.getElementById(id),cfg)}
+
+// ===== RENDER =====
+function render(){
+  const ms=hMonths(),mf=ms[0]+' – '+ms[ms.length-1];
+  document.getElementById('hLabel').textContent='H'+(H)+' '+mf+' 2026';
+  document.getElementById('hRange1').textContent=mf;
+  document.getElementById('kpiHalf').textContent='H'+H;
+  document.getElementById('kpiPer').textContent=mf;
+
+  const oG=hData(otifGap.ac),otG=hData(otGap.ac),ifG=hData(ifGap.ac);
+  const oGly=hData(otifGap.ly);
+  const ref=hData(refKhl.ac),soK=hData(soKhl.ac),vOrd=hData(volOrd.ac);
+  const nz=v=>v.filter(x=>x>0);
+  const avg=a=>{const f=nz(a);return f.length?(f.reduce((s,v)=>s+v,0)/f.length):0};
+
+  // Overview tiles
+  document.getElementById('overviewTiles').innerHTML=`
+    <div class="st t-r"><div class="sl">OTIF Gap% Prom</div><div class="sv">${avg(oG).toFixed(1)}%</div><div class="ss">AC H${H}</div></div>
+    <div class="st t-s"><div class="sl">OT Gap% Prom</div><div class="sv">${avg(otG).toFixed(1)}%</div><div class="ss">AC H${H}</div></div>
+    <div class="st t-g"><div class="sl">IF Gap% Prom</div><div class="sv">${avg(ifG).toFixed(1)}%</div><div class="ss">AC H${H}</div></div>
+    <div class="st t-t"><div class="sl">OTIF Gap% LY</div><div class="sv">${avg(oGly).toFixed(1)}%</div><div class="ss">LY H${H}</div></div>
+    <div class="st ${avg(oG)<avg(oGly)?'t-gn':'t-r'}"><div class="sl">vs LY</div><div class="sv">${(avg(oG)-avg(oGly)).toFixed(1)}pp</div><div class="ss">${avg(oG)<avg(oGly)?'Mejora':'Deterioro'}</div></div>
+    <div class="st t-d"><div class="sl">Volumen Prom</div><div class="sv">${(avg(hData(vol.ac))/1000).toFixed(0)}k hl</div><div class="ss">AC H${H}</div></div>
+  `;
+
+  // Problem tiles
+  document.getElementById('problemTiles').innerHTML=`
+    <div class="st t-r"><div class="sl">FROM</div><div class="sv">${avg(oGly).toFixed(1)}%</div><div class="ss">OTIF Gap LY</div></div>
+    <div class="st t-t"><div class="sl">TO</div><div class="sv">&lt;10%</div><div class="ss">Meta Gap%</div></div>
+    <div class="st t-d"><div class="sl">BY</div><div class="sv">${H===1?'Jun':'Dic'} 2026</div></div>
+    <div class="st t-g"><div class="sl">Benchmark</div><div class="sv">7%</div><div class="ss">Mejor CD Cluster</div></div>
+  `;
+  document.getElementById('pOTGap').textContent=`hasta ${Math.max(...nz(otG)).toFixed(1)}% gap`;
+
+  // Results tiles
+  const bestMonth=oG.reduce((best,v,i)=>v>0&&(best.v===0||v<best.v)?{v,i}:best,{v:0,i:0});
+  document.getElementById('resTiles').innerHTML=`
+    <div class="st t-r"><div class="sl">OTIF Gap Prom</div><div class="sv">${avg(oG).toFixed(1)}%</div></div>
+    <div class="st t-t"><div class="sl">Meta</div><div class="sv">&lt;10%</div></div>
+    <div class="st ${avg(oG)<10?'t-gn':'t-r'}"><div class="sl">Delta vs Meta</div><div class="sv">${(avg(oG)-10).toFixed(1)}pp</div></div>
+    <div class="st t-gn"><div class="sl">Mejor Mes</div><div class="sv">${bestMonth.v.toFixed(1)}%</div><div class="ss">${ms[bestMonth.i]||'—'}</div></div>
+  `;
+
+  // KPI tree
+  document.getElementById('kpiRoot').textContent=avg(oG).toFixed(1)+'%';
+  document.getElementById('kpiOT').textContent=avg(otG).toFixed(1)+'%';
+  document.getElementById('kpiIF').textContent=avg(ifG).toFixed(1)+'%';
+
+  const soAvg=avg(hData(soP.ac)),refAvg=avg(ref);
+  document.getElementById('kpiGestion').innerHTML=`
+    <div class="km b-r"><div class="kt">Refusal (khl/mes)</div><div class="kvr"><div><div class="kv">${refAvg.toFixed(1)}</div><div class="kl">AC</div></div><div><div class="kv" style="color:var(--t)">&lt;1.8</div><div class="kl">META</div></div></div></div>
+    <div class="km b-g"><div class="kt">Stock Out %</div><div class="kvr"><div><div class="kv">${soAvg.toFixed(2)}%</div><div class="kl">AC</div></div><div><div class="kv" style="color:var(--t)">&lt;0.8%</div><div class="kl">META</div></div></div></div>
+    <div class="km b-t"><div class="kt">In Full Gap %</div><div class="kvr"><div><div class="kv">${avg(ifG).toFixed(1)}%</div><div class="kl">AC</div></div><div><div class="kv" style="color:var(--t)">&lt;4%</div><div class="kl">META</div></div></div></div>
+  `;
+  const whAvg=avg(hData(whP.ac)),trAvg=avg(hData(trP.ac)),capAvg=avg(hData(capOcc.ac)),dsAvg=avg(hData(dropSz.ac)),distAvg=avg(hData(avgDist.ac)),tqAvg=avg(hData(tqI.ac));
+  document.getElementById('kpiOper1').innerHTML=`
+    <div class="km b-t"><div class="kt">WH Prod (hl/h)</div><div class="kvr"><div><div class="kv">${whAvg.toFixed(2)}</div><div class="kl">AC</div></div><div><div class="kv">${avg(hData(whP.ly)).toFixed(2)}</div><div class="kl">LY</div></div></div></div>
+    <div class="km b-t"><div class="kt">Transport (pck/h)</div><div class="kvr"><div><div class="kv">${trAvg.toFixed(1)}</div><div class="kl">AC</div></div><div><div class="kv">${avg(hData(trP.ly)).toFixed(1)}</div><div class="kl">LY</div></div></div></div>
+    <div class="km b-g"><div class="kt">Cap Occ (pck/T)</div><div class="kvr"><div><div class="kv">${capAvg.toFixed(0)}</div><div class="kl">AC</div></div><div><div class="kv">${avg(hData(capOcc.ly)).toFixed(0)}</div><div class="kl">LY</div></div></div></div>
+    <div class="km b-t"><div class="kt">Drop Size (pck)</div><div class="kvr"><div><div class="kv">${dsAvg.toFixed(1)}</div><div class="kl">AC</div></div><div><div class="kv">${avg(hData(dropSz.ly)).toFixed(1)}</div><div class="kl">LY</div></div></div></div>
+  `;
+  document.getElementById('kpiOper2').innerHTML=`
+    <div class="km b-t"><div class="kt">Avg Dist (km)</div><div class="kvr"><div><div class="kv">${distAvg.toFixed(1)}</div><div class="kl">AC</div></div><div><div class="kv">${avg(hData(avgDist.ly)).toFixed(1)}</div><div class="kl">LY</div></div></div></div>
+    <div class="km b-s"><div class="kt">Total Quality (ppm)</div><div class="kvr"><div><div class="kv">${tqAvg.toFixed(1)}</div><div class="kl">AC</div></div><div><div class="kv">${avg(hData(tqI.ly)).toFixed(1)}</div><div class="kl">LY</div></div></div></div>
+    <div class="km b-t"><div class="kt">Sales Curve (%)</div><div class="kvr"><div><div class="kv">${avg(hData(sci.ac)).toFixed(1)}</div><div class="kl">AC</div></div><div><div class="kv">${avg(hData(sci.ly)).toFixed(1)}</div><div class="kl">LY</div></div></div></div>
+  `;
+
+  // === TABLES ===
+  // Baseline
+  const tB=document.getElementById('tBase');tB.innerHTML='';
+  ms.forEach((_,i)=>{const idx=hSlice()[0]+i;const o=otifGap.ac[idx],ot=otGap.ac[idx],ifl=ifGap.ac[idx],s=soP.ac[idx],r=refKhl.ac[idx];
+    if(o===0&&ot===0)return;
+    tB.innerHTML+=`<tr><td><strong>${ms[i]}</strong></td><td style="font-weight:800;color:${o<10?C.gn:C.r}">${o.toFixed(1)}%</td><td style="color:${ot<7?C.gn:C.r};font-weight:700">${ot.toFixed(1)}%</td><td style="color:${ifl<4?C.gn:'#f59e0b'};font-weight:700">${ifl.toFixed(1)}%</td><td>${s.toFixed(2)}%</td><td>${r.toFixed(2)}</td></tr>`});
+
+  // Results table
+  const tR=document.getElementById('tRes');tR.innerHTML='';
+  ms.forEach((_,i)=>{const idx=hSlice()[0]+i;const o=otifGap.ac[idx],ot=otGap.ac[idx],ifl=ifGap.ac[idx];
+    if(o===0&&ot===0)return;
+    const ok=o<10;tR.innerHTML+=`<tr><td><strong>${ms[i]}</strong></td><td style="font-weight:800;color:${ok?C.gn:C.r}">${o.toFixed(1)}%</td><td>&lt;10%</td><td>${ot.toFixed(1)}%</td><td>${ifl.toFixed(1)}%</td><td>${ok?'<span style="color:'+C.gn+';font-weight:900;font-size:1.1rem">✓</span>':'<span style="color:'+C.r+';font-weight:900;font-size:1.1rem">✗</span>'}</td></tr>`});
+
+  // Exec table
+  const eTH=document.getElementById('execTH');eTH.innerHTML='<th>KPI</th><th>UOM</th>';
+  ms.forEach(m=>{eTH.innerHTML+=`<th>${m} AC</th><th>${m} LY</th>`});
+  const kpis=[{n:'Volumen',u:'hl',a:vol.ac,l:vol.ly,big:1},{n:'WH Prod.',u:'hl/h',a:whP.ac,l:whP.ly},{n:'Total Quality',u:'ppm',a:tqI.ac,l:tqI.ly,inv:1},{n:'Transport Prod.',u:'pck/h',a:trP.ac,l:trP.ly},{n:'Cap. Occ.',u:'pck/T',a:capOcc.ac,l:capOcc.ly},{n:'Drop Size',u:'pck',a:dropSz.ac,l:dropSz.ly},{n:'Avg Distance',u:'km',a:avgDist.ac,l:avgDist.ly,inv:1},{n:'Sales Curve',u:'%',a:sci.ac,l:sci.ly}];
+  const tE=document.getElementById('tExec');tE.innerHTML='';
+  kpis.forEach(k=>{let r=`<tr><td style="text-align:left;font-weight:700">${k.n}</td><td>${k.u}</td>`;
+    ms.forEach((_,i)=>{const idx=hSlice()[0]+i;const a=k.a[idx],l=k.l[idx];
+      const ok=k.inv?a<=l:a>=l;const fA=k.big&&a>1000?Math.round(a).toLocaleString():(a||0).toFixed?a.toFixed(1):a;const fL=k.big&&l>1000?Math.round(l).toLocaleString():(l||0).toFixed?l.toFixed(1):l;
+      r+=`<td style="font-weight:700;color:${a===0?'#ccc':ok?C.t:C.r}">${a===0?'—':fA}</td><td style="color:#7a8a9b">${fL}</td>`});
+    tE.innerHTML+=r+'</tr>'});
+
+  // === CHARTS ===
+  const acData=hData(otifGap.ac).map(v=>v||null);
+  const lyData=hData(otifGap.ly);
+
+  mkChart('cOver1',{type:'line',data:{labels:ms,datasets:[
+    {label:'OTIF Gap AC',data:acData,borderColor:C.s,backgroundColor:C.ss,fill:true,tension:.35,pointRadius:3,pointBackgroundColor:acData.map(v=>v!==null&&v<10?C.gn:C.r),borderWidth:2.5,...DL(C.d,v=>v!==null?v.toFixed(1)+'%':'')},
+    {label:'OTIF Gap LY',data:lyData,borderColor:C.ga,borderDash:[6,3],borderWidth:2,pointRadius:3,pointBackgroundColor:C.g,tension:.35,...DLoff},
+    {label:'Meta 10%',data:Array(6).fill(10),borderColor:C.t,borderDash:[8,4],borderWidth:2,pointRadius:0,...DLoff}
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:8,weight:600},usePointStyle:true,padding:6,boxWidth:8}}},scales:{x:NG,y:{...NG,min:0,ticks:{callback:v=>v+'%',font:{size:8}}}}}});
+
+  mkChart('cOver2',{type:'bar',data:{labels:ms,datasets:[
+    {label:'Vol Ordenado AC',data:hData(volOrd.ac).map(v=>v||null),backgroundColor:C.sa,borderRadius:5,borderSkipped:false,...DL('#fff',v=>v?v.toFixed(0):'')},
+    {label:'Vol Ordenado LY',data:hData(volOrd.ly),backgroundColor:C.ds,borderRadius:5,borderSkipped:false,...DLoff}
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:8,weight:600},usePointStyle:true,padding:6,boxWidth:8}}},scales:{x:NG,y:{...NG,ticks:{font:{size:8}}}}}});
+
+  const otAC=hData(otGap.ac).map(v=>v||null),ifAC=hData(ifGap.ac).map(v=>v||null);
+  mkChart('cOver3',{type:'bar',data:{labels:ms,datasets:[
+    {label:'OT Gap%',data:otAC,backgroundColor:C.sa,borderRadius:5,borderSkipped:false,...DL('#fff',v=>v?v.toFixed(1)+'%':'')},
+    {label:'IF Gap%',data:ifAC,backgroundColor:C.ga,borderRadius:5,borderSkipped:false,...DL(C.d,v=>v?v.toFixed(1)+'%':'')}
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:8,weight:600},usePointStyle:true,padding:6,boxWidth:8}}},scales:{x:NG,y:{...NG,ticks:{callback:v=>v+'%',font:{size:8}}}}}});
+
+  const refD=hData(refKhl.ac).map(v=>v||null),soD=hData(soKhl.ac).map(v=>v||null);
+  mkChart('cOver4',{type:'bar',data:{labels:ms,datasets:[
+    {label:'Refusal (khl)',data:refD,backgroundColor:C.ra,borderRadius:5,borderSkipped:false,...DL('#fff',v=>v?v.toFixed(2):'')},
+    {label:'Stock Out (khl)',data:soD,backgroundColor:C.ga,borderRadius:5,borderSkipped:false,...DL(C.d,v=>v?v.toFixed(2):'')}
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:8,weight:600},usePointStyle:true,padding:6,boxWidth:8}}},scales:{x:NG,y:{...NG,ticks:{font:{size:8}}}}}});
+
+  // Baseline charts
+  mkChart('cBase1',{type:'line',data:{labels:ms,datasets:[
+    {label:'OTIF Gap AC',data:acData,borderColor:C.s,tension:.35,borderWidth:2.5,pointRadius:3,pointBackgroundColor:C.s,...DL(C.d,v=>v?v.toFixed(1)+'%':'')},
+    {label:'OT Gap AC',data:otAC,borderColor:C.r,tension:.35,borderWidth:2,pointRadius:3,borderDash:[5,3],...DL(C.r,v=>v?v.toFixed(1):'')},
+    {label:'IF Gap AC',data:ifAC,borderColor:C.g,tension:.35,borderWidth:2,pointRadius:3,borderDash:[5,3],...DL('#9a7b0a',v=>v?v.toFixed(1):'')}
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:8,weight:600},usePointStyle:true,padding:6,boxWidth:8}}},scales:{x:NG,y:{...NG,min:0,ticks:{callback:v=>v+'%',font:{size:8}}}}}});
+
+  mkChart('cBase2',{type:'bar',data:{labels:ms,datasets:[
+    {label:'Refusal AC',data:refD,backgroundColor:C.ra,borderRadius:5,borderSkipped:false,...DL('#fff',v=>v?v.toFixed(1):'')},
+    {label:'Stock Out AC',data:soD,backgroundColor:C.ta,borderRadius:5,borderSkipped:false,...DL(C.d,v=>v?v.toFixed(2):'')},
+    {label:'Refusal LY',data:hData(refKhl.ly),backgroundColor:C.ds,borderRadius:5,borderSkipped:false,...DLoff}
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:8,weight:600},usePointStyle:true,padding:6,boxWidth:8}}},scales:{x:NG,y:{...NG,ticks:{font:{size:8}}}}}});
+
+  // Exec charts
+  mkChart('cExec1',{type:'bar',data:{labels:ms,datasets:[
+    {label:'AC',data:hData(vol.ac).map(v=>v||null),backgroundColor:C.ta,borderRadius:5,borderSkipped:false,...DL(C.d,v=>v?(v/1000).toFixed(0)+'k':'')},
+    {label:'LY',data:hData(vol.ly),backgroundColor:C.ds,borderRadius:5,borderSkipped:false,...DLoff}
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:8,weight:600},usePointStyle:true,padding:6,boxWidth:8}}},scales:{x:NG,y:{...NG,ticks:{callback:v=>(v/1000).toFixed(0)+'k',font:{size:8}}}}}});
+
+  mkChart('cExec2',{type:'line',data:{labels:ms,datasets:[
+    {label:'AC',data:hData(whP.ac).map(v=>v||null),borderColor:C.t,backgroundColor:C.ts,fill:true,tension:.35,borderWidth:2.5,pointRadius:3,pointBackgroundColor:C.t,...DL(C.d,v=>v?v.toFixed(2):'')},
+    {label:'LY',data:hData(whP.ly),borderColor:C.d,tension:.35,borderWidth:2,borderDash:[6,3],pointRadius:3,pointBackgroundColor:C.d,...DLoff}
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:8,weight:600},usePointStyle:true,padding:6,boxWidth:8}}},scales:{x:NG,y:{...NG,ticks:{font:{size:8}}}}}});
+
+  mkChart('cExec3',{type:'bar',data:{labels:ms,datasets:[
+    {label:'AC',data:hData(tqI.ac).map(v=>v||null),backgroundColor:C.sa,borderRadius:5,borderSkipped:false,...DL('#fff',v=>v?v.toFixed(0):'')},
+    {label:'LY',data:hData(tqI.ly),backgroundColor:C.ds,borderRadius:5,borderSkipped:false,...DLoff}
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:8,weight:600},usePointStyle:true,padding:6,boxWidth:8}}},scales:{x:NG,y:{...NG,title:{display:true,text:'ppm',font:{size:8}}}}}});
+
+  mkChart('cExec4',{type:'line',data:{labels:ms,datasets:[
+    {label:'AC',data:hData(trP.ac).map(v=>v||null),borderColor:C.s,backgroundColor:C.ss,fill:true,tension:.35,borderWidth:2.5,pointRadius:3,pointBackgroundColor:C.s,...DL(C.d,v=>v?v.toFixed(1):'')},
+    {label:'LY',data:hData(trP.ly),borderColor:C.g,tension:.35,borderWidth:2,borderDash:[6,3],pointRadius:3,pointBackgroundColor:C.g,...DLoff}
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:8,weight:600},usePointStyle:true,padding:6,boxWidth:8}}},scales:{x:NG,y:{...NG,ticks:{font:{size:8}}}}}});
+
+  // Results chart
+  mkChart('cRes1',{type:'bar',data:{labels:ms,datasets:[
+    {label:'OTIF Gap AC',data:acData,backgroundColor:acData.map(v=>v!==null&&v<10?C.ta:C.ra),borderRadius:6,borderSkipped:false,datalabels:{display:true,color:C.d,font:{weight:800,size:10},formatter:v=>v!==null?v.toFixed(1)+'%':'',anchor:'end',align:'top',offset:2}},
+    {label:'Meta 10%',data:Array(6).fill(10),type:'line',borderColor:C.g,borderDash:[8,4],borderWidth:2.5,pointRadius:0,...DLoff}
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:8,weight:600},usePointStyle:true,padding:6,boxWidth:8}}},scales:{x:NG,y:{...NG,min:0,max:25,ticks:{callback:v=>v+'%',font:{size:8}}}}}});
+
+  // Scatter charts
+  const scOpt=(xT,yT)=>({responsive:true,plugins:{legend:{display:false}},scales:{x:{...NG,title:{display:true,text:xT,font:{size:9,weight:600}},ticks:{font:{size:7}}},y:{...NG,title:{display:true,text:yT,font:{size:9,weight:600}},ticks:{font:{size:7}}}}});
+  const scDL={datalabels:{display:true,color:C.d,font:{weight:700,size:9},formatter:(_,c)=>ms[c.dataIndex]||'',align:'right',offset:5}};
+
+  const scPts1=[],scPts2=[],scPts3=[];
+  ms.forEach((_,i)=>{const idx=hSlice()[0]+i;
+    if(otGap.ac[idx]>0)scPts1.push({x:refKhl.ac[idx],y:otGap.ac[idx]});
+    if(ifGap.ac[idx]>0)scPts2.push({x:soKhl.ac[idx],y:ifGap.ac[idx]});
+    if(otifGap.ac[idx]>0)scPts3.push({x:volOrd.ac[idx],y:otifGap.ac[idx]});
+  });
+
+  mkChart('cDisp1',{type:'scatter',data:{datasets:[{data:scPts1,backgroundColor:C.sa,pointRadius:6,pointHoverRadius:9,...scDL}]},options:scOpt('Refusal (khl)','On Time Gap %')});
+  mkChart('cDisp2',{type:'scatter',data:{datasets:[{data:scPts2,backgroundColor:C.ga,pointRadius:6,pointHoverRadius:9,...scDL}]},options:scOpt('Stock Out (khl)','In Full Gap %')});
+  mkChart('cDisp3',{type:'scatter',data:{datasets:[{data:scPts3,backgroundColor:C.ta,pointRadius:6,pointHoverRadius:9,...scDL}]},options:scOpt('Vol. Ordenado (khl)','OTIF Gap %')});
+}
+
+// Gantt (static)
+const gD=[{n:'Reducir Stock Out (forecast)',s:7,e:52,p:55},{n:'Disminuir Refusal (despacho)',s:7,e:30,p:85},{n:'Control cargue 6AM (On Time)',s:7,e:52,p:65},{n:'Optimización rutas (modulación)',s:10,e:40,p:50},{n:'Doble verificación picking',s:8,e:26,p:100},{n:'Fleet availability (mto prev)',s:10,e:52,p:45}];
+const gEl=document.getElementById('gantt');
+gD.forEach(g=>{const t=52,pw=((g.e-g.s)/t*100),sw=((g.s-1)/t*100),aw=pw*(g.p/100);
+  gEl.innerHTML+=`<div class="gn-row"><div class="gn-lbl">${g.n}</div><div class="gn-track"><div class="gn-bar gn-plan" style="left:${sw}%;width:${pw}%"></div><div class="gn-bar gn-act" style="left:${sw}%;width:${aw}%"><span class="gn-pct">${g.p}%</span></div></div></div>`});
+
+render();
+</script>
+</body>
+</html>

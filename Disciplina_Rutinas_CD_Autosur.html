@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body>
+<title>Plan de Disciplina de Rutinas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap">
+<style>
+/* Layout: navy hero + numbered sections on alternating white / light bands, same visual system as the 5S program page. Deliberately single light look. */
+:root{
+  --navy:#1B3A4B;--navy-dark:#12262F;--navy-soft:#274859;--teal:#2E6E7E;--teal-soft:#E4EEF0;
+  --red:#C0392B;--red-soft:#FBEAE8;--amber:#F39C12;--amber-ink:#A9650A;--amber-soft:#FEF3E0;--green:#1E8E5A;--green-soft:#E7F6EE;
+  --light:#F4F6F7;--white:#FFFFFF;--ink:#22303A;--grey:#5B6B73;--grey-soft:#8A969C;--border:#E3E8EA;
+  --shadow:0 2px 14px rgba(18,38,47,.07);--radius:14px;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--white);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--navy-dark)}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+@media (min-width:760px){.wrap{padding-left:max(28px,env(safe-area-inset-left,0px));padding-right:max(28px,env(safe-area-inset-right,0px))}}
+section{padding-block:60px}
+section.tint{background:var(--light)}
+h1,h2,h3,h4{font-weight:800;letter-spacing:-.01em;color:var(--navy);margin:0;text-wrap:balance}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.eyebrow .tag{background:var(--navy);color:#fff;border-radius:5px;padding:3px 8px;font-size:11px}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--border)}
+.sec-title{font-size:clamp(22px,3vw,28px);margin-bottom:8px}
+.sec-sub{color:var(--grey);font-size:15px;max-width:760px;margin-bottom:28px}
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--navy-dark);border-bottom:1px solid rgba(255,255,255,.07)}
+.nav .wrap{display:flex;align-items:center;gap:20px;height:54px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:800;color:#fff;font-size:14px;white-space:nowrap}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--red)}
+.links{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;min-width:0}
+.links a{font-size:13px;font-weight:500;color:#AFC4CC;white-space:nowrap;padding:8px 12px;border-radius:8px;text-decoration:none}
+.links a:hover,.links a:focus-visible{color:#fff;background:rgba(255,255,255,.08);outline:none}
+/* hero */
+.hero{background:radial-gradient(circle at 82% 8%,var(--navy-soft) 0%,var(--navy-dark) 55%);color:#fff;padding-block:52px 46px;position:relative;overflow:hidden}
+.hero .ring{position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.06);pointer-events:none}
+.eyebrow-hero{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#8FD0C9;margin-bottom:14px;font-weight:600}
+.hero h1{font-size:clamp(30px,5vw,44px);color:#fff;line-height:1.08;margin-bottom:14px}
+.hero h1 span{color:#8FD0C9}
+.hero .lead{font-size:16px;color:#C9D9DE;max-width:680px;margin-bottom:24px}
+.meta-row{display:flex;gap:22px;flex-wrap:wrap;font-size:13.5px;color:#9FB6C0;margin-bottom:26px}
+.meta-row b{color:#fff}
+.banner{display:flex;gap:13px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:15px 18px;max-width:720px}
+.banner .ic{flex:none;width:28px;height:28px;border-radius:50%;background:var(--amber);color:var(--navy-dark);display:flex;align-items:center;justify-content:center;font-weight:800}
+.banner p{font-size:13.5px;color:#D8E4E8}
+.banner b{color:#fff}
+/* panels */
+.panel,.card,.table-card,.kpi-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);min-width:0}
+.panel{padding:22px}
+.panel h4{font-size:15px;margin-bottom:12px}
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:18px}
+.bullets{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px}
+.bullets li{position:relative;padding-left:19px;font-size:14px}
+.bullets li::before{content:"";position:absolute;left:0;top:8px;width:7px;height:7px;border-radius:50%;background:var(--teal)}
+.bullets b{color:var(--navy)}
+.goal{font-size:17px;font-weight:700;color:var(--navy);line-height:1.45}
+.goal-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.tagx{display:inline-block;font:600 11.5px var(--mono);background:var(--teal-soft);color:var(--teal);border-radius:6px;padding:3px 8px}
+/* standard */
+.std{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.std .panel h4{display:flex;align-items:center;gap:10px}
+.std .panel h4 .k{font:700 11px var(--mono);background:var(--teal-soft);color:var(--teal);padding:3px 8px;border-radius:6px}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.checks li{display:grid;grid-template-columns:18px 1fr;gap:9px;font-size:13.5px}
+.checks li::before{content:"";width:14px;height:14px;margin-top:3px;border:2px solid var(--teal);border-radius:4px}
+/* 5 questions */
+.qgrid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:900px){.qgrid{grid-template-columns:minmax(0,1fr)}}
+.qlist{display:grid;gap:12px}
+.q{display:grid;grid-template-columns:44px 1fr;gap:14px;padding:16px;border:1px solid var(--border);border-radius:12px;background:var(--white)}
+.q .k{width:44px;height:36px;border-radius:9px;background:var(--navy);color:#fff;font:700 12px var(--mono);display:flex;align-items:center;justify-content:center}
+.q h5{margin:0 0 4px;font-size:14.5px;color:var(--navy);font-weight:700}
+.q p{font-size:13px;color:var(--grey)}
+.q .src{display:inline-block;margin-top:6px;font:600 11px var(--mono);color:var(--teal)}
+.form{display:grid;gap:12px;padding:20px}
+.form h4{font-size:16px}
+.form label{display:grid;gap:4px;font-size:12.5px;font-weight:600;color:var(--grey)}
+.form .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:12px}
+select,input,textarea{font:13px var(--sans);color:var(--ink);background:var(--white);border:1px solid var(--border);border-radius:8px;padding:8px 10px;min-width:0;width:100%}
+textarea{resize:vertical;min-height:60px}
+.yn{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--border);font-size:13px}
+.yn .t{font-weight:600;color:var(--ink)}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:9px;overflow:hidden}
+.seg button{font:700 12px var(--sans);border:0;background:var(--white);color:var(--grey);padding:7px 14px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--border)}
+.seg button[aria-pressed="true"].si{background:var(--green);color:#fff}
+.seg button[aria-pressed="true"].no{background:var(--red);color:#fff}
+.score{display:flex;align-items:baseline;gap:10px;padding-top:6px}
+.score b{font:700 26px var(--mono);color:var(--navy)}
+.score span{font-size:12.5px;color:var(--grey)}
+.btn{font:700 13px var(--sans);padding:10px 16px;border-radius:9px;border:0;background:var(--teal);color:#fff;cursor:pointer}
+.btn:hover{background:var(--navy)}
+.btn:disabled{opacity:.5;cursor:default}
+.msg{font-size:12.5px;min-height:1em}
+.msg.ok{color:var(--green)}.msg.err{color:var(--red)}
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+/* tracker */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:18px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font:600 12.5px var(--sans);padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--white);cursor:pointer;color:var(--grey)}
+.chip:hover{border-color:var(--teal)}
+.chip.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.chip small{font:600 10px var(--mono);opacity:.7;margin-left:4px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:16px;margin-bottom:20px}
+.kpi-card{padding:18px 20px}
+.kpi-val{font:700 28px var(--mono);margin-bottom:4px;color:var(--navy)}
+.kpi-lbl{font-size:13px;font-weight:700}
+.kpi-sub{font-size:12px;color:var(--grey-soft)}
+.tbox{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:900px}
+thead th{background:var(--navy);color:#fff;text-align:left;padding:11px 12px;font-weight:600;font-size:11px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:#FAFBFC}
+td.n,th.n{text-align:right}
+td.mono{font-family:var(--mono);font-size:12.5px}
+td.strong{font-weight:700;color:var(--navy)}
+.rname{font-weight:600}
+.rsub{font-size:11.5px;color:var(--grey-soft)}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;font-family:var(--mono)}
+.p-ok{background:var(--green-soft);color:var(--green)}.p-warn{background:var(--amber-soft);color:var(--amber-ink)}.p-bad{background:var(--red-soft);color:var(--red)}.p-neu{background:var(--teal-soft);color:var(--teal)}
+.days{display:flex;gap:2px;flex-wrap:nowrap}
+.gbtn{display:flex;align-items:center;gap:6px;background:none;border:0;padding:0;font:inherit;color:var(--teal);cursor:pointer;text-align:left}
+.gbtn .rname{color:var(--teal);text-decoration:underline;text-underline-offset:3px}
+.gbtn .car{font-size:12px;width:12px}
+tr.det>td{background:var(--light);padding:14px 16px}
+.det-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px;font-size:13px;color:var(--navy)}
+table.det-t{min-width:0;background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+table.det-t thead th{background:var(--teal-soft);color:var(--navy);position:static}
+table.det-t td{vertical-align:top;font-size:12.5px}
+.dd{width:11px;height:16px;border-radius:3px;background:#EEF1F2;flex:none}
+.dd.ex{background:var(--teal)}
+.dd.okc{background:var(--green)}
+.dd.lowc{background:var(--amber)}
+.dd.miss{background:var(--white);box-shadow:inset 0 0 0 1.5px var(--red)}
+.dd.nolog{background:var(--white);box-shadow:inset 0 0 0 1.5px #C9D2D6}
+.dd.off{background:transparent;box-shadow:inset 0 0 0 1px #EEF1F2}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:12px;color:var(--grey);padding:12px 14px;border-top:1px solid var(--border);background:#FAFBFC;align-items:center}
+.legend .dd{display:inline-block;vertical-align:middle;margin-right:6px}
+.table-note{font-size:12px;color:var(--grey-soft);padding:11px 14px;border-top:1px solid var(--border);font-style:italic;background:#FAFBFC}
+.marks{font-family:var(--mono);letter-spacing:2px}
+.marks .y{color:var(--green)}.marks .n{color:var(--red)}
+.empty{padding:22px;text-align:center;color:var(--grey);font-size:13.5px}
+td .def{font-size:12px;color:var(--grey-soft)}
+.cell{width:76px;text-align:right;font-family:var(--mono);font-size:12.5px}
+.cell.ok{background:var(--green-soft);border-color:#BFE3CF;color:var(--green)}
+.cell.bad{background:var(--red-soft);border-color:#F1C6C0;color:var(--red)}
+td.meta{font:700 12.5px var(--mono);color:var(--navy);white-space:nowrap}
+footer{padding-block:26px;background:var(--navy-dark);color:#9FB6C0;font-size:12.5px}
+</style>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span>DISCIPLINA DE RUTINAS</div>
+    <div class="links">
+      <a href="#objetivo">Objetivo</a><a href="#estandar">Estándar</a><a href="#check">Check de 5 preguntas</a><a href="#seguimiento">Seguimiento gerente</a><a href="#indicadores">Indicadores</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="ring" style="width:520px;height:520px;top:-220px;right:-120px"></div>
+  <div class="ring" style="width:320px;height:320px;bottom:-180px;right:120px"></div>
+  <div class="wrap">
+    <div class="eyebrow-hero">Herramienta de gestión · Efectividad de rutinas</div>
+    <h1>DC Autosur Bogotá<br><span>Disciplina en la ejecución de las rutinas</span></h1>
+    <p class="lead">Un estándar de cómo se ejecuta cada rutina, un check corto de 5 preguntas para validar su efectividad y un seguimiento mensual para que el gerente vea qué rutinas se ejecutaron y cuáles no.</p>
+    <div class="meta-row">
+      <div>📍 <b>CD Autosur</b> · Región Centro</div>
+      <div>🗓️ Histórico <b>jul – oct 2026</b></div>
+      <div>✅ <b id="mChecks">–</b> checks registrados</div>
+    </div>
+    <div class="banner"><div class="ic">✎</div><p><b>El histórico de julio a octubre sale del Action Log y de las acciones adicionales de Matutina, Check to Coach y Semanal de distribución:</b> un día cuenta como ejecutado si la rutina registró al menos una acción. Desde que el equipo empiece a usar el check de 5 preguntas, cada sesión queda registrada con su puntaje de efectividad.</p></div>
+  </div>
+</header>
+
+<section id="objetivo">
+  <div class="wrap">
+    <div class="eyebrow"><span class="tag">ÍTEM 01</span>PROBLEMA Y OBJETIVO</div>
+    <h2 class="sec-title">¿Qué queremos resolver?</h2>
+    <p class="sec-sub">Las rutinas generan acciones todos los días, pero la ejecución no siempre sigue el estándar. Eso hace que algunas acciones no muevan el KPI y que sea difícil demostrar el efecto en una auditoría.</p>
+    <div class="grid-2">
+      <div class="panel">
+        <h4>Lo que vemos en la operación</h4>
+        <ul class="bullets">
+          <li>Las <b>desviaciones de KPI</b> se atienden con acciones rápidas, pero pocas veces con una herramienta de análisis.</li>
+          <li>Algunas acciones se registran <b>sin fecha compromiso real</b> o sin nota de cierre con el resultado.</li>
+          <li>Algunas rutinas <b>dejan de sesionar</b> varios meses sin que nadie lo note.</li>
+          <li>Las acciones <b>vencidas</b> no se revisan en un punto fijo de la agenda.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h4>Objetivo</h4>
+        <p class="goal">A marzo de 2027, el 100 % de las rutinas mínimas se ejecuta según su frecuencia y cada sesión obtiene al menos 4 de 5 en el check de efectividad.</p>
+        <div class="goal-meta"><span class="tagx">Dueño: Jefe de operaciones</span><span class="tagx">Revisión: Rutina semanal de Gestión</span><span class="tagx">Meta del check: ≥ 80 %</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="estandar" class="tint">
+  <div class="wrap">
+    <div class="eyebrow"><span class="tag">ÍTEM 02</span>ESTÁNDAR DE DISCIPLINA</div>
+    <h2 class="sec-title">Cómo se ejecuta una rutina</h2>
+    <p class="sec-sub">La regla para todas las rutinas mínimas. El check de 5 preguntas del ítem 03 verifica estos puntos en cada sesión.</p>
+    <div class="std">
+      <div class="panel"><h4><span class="k">ANTES</span>Preparar</h4><ul class="checks">
+        <li>La rutina está citada en el calendario maestro, con la TOR vigente.</li>
+        <li>Los KPIs del árbol de la TOR están actualizados en el tablero o MCRS.</li>
+        <li>El dueño revisó las acciones vencidas de su rutina.</li></ul></div>
+      <div class="panel"><h4><span class="k">DURANTE</span>Ejecutar</h4><ul class="checks">
+        <li>Se sigue la agenda de la TOR y se respeta el tiempo.</li>
+        <li>Cada KPI fuera de meta tiene dueño y herramienta de gestión asignada (máximo 48 h).</li>
+        <li>Lo que la rutina no puede resolver se escala con nombre y fecha.</li>
+        <li>Las vencidas se reprograman con fecha nueva y motivo.</li></ul></div>
+      <div class="panel"><h4><span class="k">DESPUÉS</span>Registrar y cerrar</h4><ul class="checks">
+        <li>Cada acción queda en el Action Log con KPI correcto y fecha compromiso real.</li>
+        <li>Al cerrar, la nota dice qué se hizo y qué resultado dio.</li>
+        <li>Se devuelve la respuesta a la primera línea que reportó el problema.</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="check">
+  <div class="wrap">
+    <div class="eyebrow"><span class="tag">ÍTEM 03</span>CHECK DE EFECTIVIDAD</div>
+    <h2 class="sec-title">5 preguntas para validar la rutina</h2>
+    <p class="sec-sub">Versión corta del Check de Efectividad del Team Room. Se responde al terminar cada sesión, en menos de un minuto. Cada “sí” vale 20 %; la sesión es efectiva con 4 de 5.</p>
+    <div class="qgrid">
+      <div class="qlist">
+        <div class="q"><span class="k">P1</span><div><h5>¿Se cumplió en el horario y el tiempo de la TOR?</h5><p>Empezó a la hora citada y terminó dentro de la duración definida, siguiendo la agenda.</p><span class="src">Recurso · Ejecución</span></div></div>
+        <div class="q"><span class="k">P2</span><div><h5>¿Se revisaron las acciones pendientes y vencidas?</h5><p>Las del turno o la sesión anterior se cerraron o se reprogramaron con fecha nueva y motivo.</p><span class="src">2a · 3a Revisión de acciones</span></div></div>
+        <div class="q"><span class="k">P3</span><div><h5>¿Los indicadores estaban actualizados?</h5><p>Los KPIs y PIs del tablero tenían el dato del día o del período antes de empezar.</p><span class="src">2b · 3b Actualizar PIs</span></div></div>
+        <div class="q"><span class="k">P4</span><div><h5>¿Cada KPI en rojo tuvo dueño y acción o herramienta?</h5><p>Se discutió la desviación y quedó una acción, un 5 porqués o un reporte de anomalía, o se escaló a otra área.</p><span class="src">2c · 4a · 4b Solución de problemas</span></div></div>
+        <div class="q"><span class="k">P5</span><div><h5>¿Las acciones nuevas quedaron en el Action Log?</h5><p>Con KPI correcto, responsable y fecha compromiso real, antes de que termine el día.</p><span class="src">Registro y cierre</span></div></div>
+      </div>
+      <div class="card">
+        <form class="form" id="frm" novalidate>
+          <h4>Registrar una sesión</h4>
+          <div class="row">
+            <label>Rutina<select id="fRut" required></select></label>
+            <label>Fecha de la sesión<input id="fFecha" type="date" required></label>
+          </div>
+          <label>Quién evalúa<input id="fEval" maxlength="80" placeholder="Nombre o cargo"></label>
+          <div id="yn"></div>
+          <div class="score"><b id="fScore">0 %</b><span id="fScoreTxt">Responde las 5 preguntas</span></div>
+          <label>Observación<textarea id="fObs" maxlength="400" placeholder="Qué faltó o qué se debe corregir para la próxima sesión"></textarea></label>
+          <button type="submit" class="btn" id="fSave">Guardar check</button>
+          <p class="msg" id="fMsg" role="status"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="seguimiento" class="tint">
+  <div class="wrap">
+    <div class="eyebrow"><span class="tag">ÍTEM 04</span>SEGUIMIENTO DEL GERENTE</div>
+    <h2 class="sec-title">¿Se ejecutaron las rutinas?</h2>
+    <p class="sec-sub">Para cada rutina: todas las acciones registradas en el mes y, según su frecuencia, las sesiones esperadas, las sesiones con registro, el cumplimiento y la efectividad del check. La franja muestra cada día del mes.</p>
+    <div class="toolbar"><div class="chips" id="mesChips" role="group" aria-label="Mes"></div></div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-val" id="kAcc">–</div><div class="kpi-lbl">Acciones registradas</div><div class="kpi-sub">todas las acciones de las rutinas en el mes</div></div>
+      <div class="kpi-card"><div class="kpi-val" id="kCump">–</div><div class="kpi-lbl">Cumplimiento de ejecución</div><div class="kpi-sub">sesiones ejecutadas / esperadas</div></div>
+      <div class="kpi-card"><div class="kpi-val" id="kFull">–</div><div class="kpi-lbl">Rutinas al 100 %</div><div class="kpi-sub" id="kFullSub">de las rutinas programadas</div></div>
+      <div class="kpi-card"><div class="kpi-val" id="kCero">–</div><div class="kpi-lbl">Rutinas sin ejecución</div><div class="kpi-sub">esperadas en el mes y sin ninguna sesión</div></div>
+      <div class="kpi-card"><div class="kpi-val" id="kEfec">–</div><div class="kpi-lbl">Efectividad promedio</div><div class="kpi-sub" id="kEfecSub">según el check de 5 preguntas</div></div>
+    </div>
+    <div class="table-card">
+      <div class="tbox"><table><thead><tr><th>Rutina</th><th>Frecuencia</th><th class="n">Acciones</th><th class="n">Sesiones esperadas</th><th class="n">Sesiones con registro</th><th>Cumplimiento</th><th>Efectividad</th><th>Días del mes</th></tr></thead><tbody id="tBody"></tbody></table></div>
+      <div class="legend">
+        <span><span class="dd okc"></span>Ejecutada, check ≥ 80 %</span>
+        <span><span class="dd lowc"></span>Ejecutada, check &lt; 80 %</span>
+        <span><span class="dd ex"></span>Ejecutada (evidencia Action Log)</span>
+        <span><span class="dd miss"></span>Programada y no ejecutada</span>
+        <span><span class="dd nolog"></span>Programada, sin registro en Action Log</span>
+        <span><span class="dd"></span>No programada o futura</span>
+      </div>
+      <p class="table-note">Todas las rutinas se programan de lunes a viernes. Diarias: una sesión por día hábil. Semanales: una sesión por semana (cada semana cuenta en el mes de su jueves). Mensuales: una sesión. Octubre incluye 52 acciones de un archivo complementario sin folio del sistema (folios MAN-001 a MAN-052) en OWDs, COPASST, Semanal de Almacén, Rutinas planning, Rutina 5s y Comité de Gente. De julio a octubre el histórico sale del Action Log: un día sin acciones se marca “sin registro” y no como incumplimiento. Después de esa fecha, un día hábil sin check cuenta como no ejecutado.</p>
+    </div>
+    <div class="table-card" style="margin-top:18px">
+      <div class="tbox"><table style="min-width:760px"><thead><tr><th>Fecha</th><th>Rutina</th><th>Evaluó</th><th class="n">Puntaje</th><th>P1–P5</th><th>Observación</th></tr></thead><tbody id="cBody"></tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<section id="indicadores">
+  <div class="wrap">
+    <div class="eyebrow"><span class="tag">ÍTEM 05</span>INDICADORES</div>
+    <h2 class="sec-title">Indicadores de disciplina</h2>
+    <p class="sec-sub">Se registran cada mes en la Rutina semanal de Gestión. La celda se pinta en verde si cumple la meta y en rojo si no.</p>
+    <div class="table-card">
+      <div class="tbox"><table style="min-width:760px"><thead id="indHead"></thead><tbody id="indBody"><tr><td colspan="7" class="def">Cargando indicadores…</td></tr></tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap">Disciplina de rutinas · DC Autosur Bogotá · Histórico calculado del Action Log 2026 (julio a octubre)</div></footer>
+
+<script>
+(() => {
+  const HIST = {"Cambio de turno almacén":{"2026-07-02":2,"2026-07-05":2,"2026-07-06":1,"2026-07-08":2,"2026-07-09":3,"2026-07-11":1,"2026-07-12":1,"2026-07-14":2,"2026-07-15":3,"2026-07-17":2,"2026-07-21":1,"2026-07-22":1,"2026-07-25":1,"2026-07-28":2,"2026-07-29":3,"2026-07-30":1,"2026-08-01":2,"2026-08-03":2,"2026-08-04":2,"2026-08-05":1,"2026-08-06":3,"2026-08-10":2,"2026-08-12":3,"2026-08-13":1,"2026-08-15":2,"2026-08-17":1,"2026-08-18":1,"2026-08-19":1,"2026-08-21":1,"2026-08-22":1,"2026-08-31":3,"2026-09-01":3,"2026-09-02":4,"2026-09-03":1,"2026-09-07":3,"2026-09-08":3,"2026-09-11":3,"2026-09-12":3,"2026-09-14":4,"2026-09-16":3,"2026-09-17":2,"2026-09-24":1,"2026-10-01":1,"2026-10-02":1,"2026-10-05":1,"2026-10-07":2,"2026-10-09":1,"2026-10-13":1,"2026-10-15":1,"2026-10-19":3,"2026-10-22":1,"2026-10-28":1,"2026-11-03":2,"2026-11-09":2,"2026-11-11":2,"2026-11-17":1},"Check to Coach":{"2026-07-22":5,"2026-09-11":5,"2026-09-14":6,"2026-09-19":7,"2026-09-21":2,"2026-09-23":22,"2026-09-24":6,"2026-09-26":5,"2026-09-30":7},"Comite de Gente (mensual)":{"2026-07-31":10,"2026-08-31":4,"2026-10-28":2,"2026-10-29":3,"2026-10-30":2},"Comite de Seguridad y Salud Ocupacional":{"2026-07-03":1,"2026-07-18":4,"2026-07-28":4,"2026-08-29":4,"2026-09-03":3,"2026-09-12":3,"2026-09-14":2,"2026-10-22":1,"2026-10-23":2,"2026-10-26":3,"2026-10-27":3,"2026-10-28":1},"Diaria Logistica":{"2026-07-02":1,"2026-07-03":1,"2026-07-06":2,"2026-07-08":10,"2026-07-09":11,"2026-07-10":6,"2026-07-14":12,"2026-07-15":7,"2026-07-16":14,"2026-07-17":9,"2026-07-22":25,"2026-07-24":11,"2026-07-27":8,"2026-07-28":16,"2026-07-29":12,"2026-07-30":6,"2026-08-05":10,"2026-08-06":7,"2026-08-10":7,"2026-08-11":2,"2026-08-18":31,"2026-08-20":12,"2026-08-24":6,"2026-08-25":3,"2026-08-26":8,"2026-08-27":7,"2026-08-28":1,"2026-09-03":28,"2026-09-07":8,"2026-09-08":3,"2026-09-14":5,"2026-09-15":10,"2026-09-16":6,"2026-09-17":7,"2026-09-18":8,"2026-09-21":10,"2026-09-22":5,"2026-09-23":4,"2026-09-24":5,"2026-09-28":9,"2026-09-29":8,"2026-10-01":11,"2026-10-05":8,"2026-10-07":13,"2026-10-08":6,"2026-10-09":16,"2026-10-13":8,"2026-10-15":9,"2026-10-19":9,"2026-10-27":4,"2026-10-28":8,"2026-10-30":4,"2026-11-03":4,"2026-11-06":9,"2026-11-09":10,"2026-11-10":6,"2026-11-12":3,"2026-11-13":6,"2026-11-17":5,"2026-11-18":7},"Matutina de Distribución":{"2026-07-01":5,"2026-07-02":4,"2026-07-03":1,"2026-07-06":2,"2026-07-08":1,"2026-07-10":1,"2026-07-11":5,"2026-07-14":1,"2026-07-16":1,"2026-07-17":1,"2026-07-18":6,"2026-07-22":1,"2026-07-24":1,"2026-07-28":1,"2026-07-30":1,"2026-08-03":1,"2026-08-04":1,"2026-08-06":1,"2026-08-10":1,"2026-08-12":1,"2026-08-13":1,"2026-08-18":1,"2026-08-20":1,"2026-08-21":1,"2026-08-25":1,"2026-08-26":1,"2026-08-28":1,"2026-08-29":5,"2026-09-01":1,"2026-09-02":1,"2026-09-03":1,"2026-09-04":1,"2026-09-08":1,"2026-09-10":2,"2026-09-12":4,"2026-09-14":2,"2026-09-15":1,"2026-09-16":1,"2026-09-17":2,"2026-09-21":1,"2026-09-23":1,"2026-09-25":1,"2026-09-29":1,"2026-10-01":1,"2026-10-02":1,"2026-10-03":2,"2026-10-06":1,"2026-10-08":1,"2026-10-13":1,"2026-10-14":1,"2026-10-16":1,"2026-10-20":1,"2026-10-22":1,"2026-10-23":1,"2026-10-27":1,"2026-10-29":1},"OWDs":{"2026-07-07":1,"2026-07-09":1,"2026-07-10":1,"2026-07-11":1,"2026-07-17":1,"2026-07-25":3,"2026-07-29":1,"2026-07-30":2,"2026-08-04":2,"2026-08-05":1,"2026-08-12":1,"2026-08-15":1,"2026-08-21":2,"2026-08-29":2,"2026-09-12":2,"2026-09-17":3,"2026-09-24":1,"2026-10-14":3,"2026-10-15":3,"2026-10-16":2,"2026-10-19":3},"Rutina 5s":{"2026-07-12":2,"2026-07-21":3,"2026-07-27":2,"2026-07-30":1,"2026-09-29":1,"2026-10-20":3,"2026-10-21":3,"2026-10-22":2},"Rutina Semanal Safety":{"2026-07-18":3,"2026-07-25":3,"2026-07-28":5,"2026-08-05":9,"2026-08-06":1,"2026-08-15":2,"2026-08-19":4,"2026-08-29":8,"2026-09-03":5,"2026-09-12":4,"2026-09-24":2,"2026-10-03":7,"2026-10-08":4,"2026-10-15":4,"2026-11-09":34},"Rutina semanal de People":{"2026-07-03":2,"2026-07-10":3,"2026-07-17":5,"2026-07-23":2,"2026-07-24":1,"2026-07-29":2,"2026-08-31":8,"2026-09-01":1,"2026-09-02":1,"2026-09-03":1,"2026-09-04":1,"2026-09-10":5,"2026-09-11":3,"2026-09-12":4,"2026-09-15":7,"2026-09-16":3,"2026-09-17":1,"2026-09-29":1,"2026-10-01":6,"2026-10-06":1,"2026-10-07":5,"2026-10-08":1,"2026-10-16":1},"Rutina semanal de distribución":{"2026-08-14":1,"2026-08-20":6,"2026-09-03":5,"2026-09-04":17,"2026-09-05":8,"2026-11-22":5},"Rutinas planning":{"2026-07-28":2,"2026-08-07":1,"2026-08-14":1,"2026-09-03":2,"2026-09-14":3,"2026-09-16":4,"2026-10-08":2,"2026-10-09":3,"2026-10-13":3},"Semanal Ventas y Logística (RCOG)":{"2026-07-21":5,"2026-07-22":1},"Semanal de Almacén":{"2026-07-14":1,"2026-07-28":3,"2026-08-20":13,"2026-09-03":7,"2026-09-22":12,"2026-09-25":1,"2026-10-05":2,"2026-10-06":3,"2026-10-07":3},"Semanal de Flota":{"2026-07-06":3,"2026-07-14":4,"2026-07-15":1,"2026-07-16":1,"2026-07-17":1,"2026-07-21":1,"2026-07-22":2,"2026-07-24":1,"2026-07-31":1,"2026-08-04":1,"2026-08-07":6,"2026-08-10":2,"2026-08-11":2,"2026-08-12":10,"2026-08-15":3,"2026-08-18":2,"2026-08-19":1,"2026-08-27":4,"2026-09-02":5,"2026-09-08":1,"2026-09-11":7,"2026-09-14":6,"2026-09-15":1,"2026-09-16":2,"2026-09-22":1,"2026-09-30":3,"2026-10-02":4,"2026-10-07":4,"2026-10-08":1,"2026-10-09":1,"2026-10-10":1,"2026-10-13":2,"2026-10-14":4,"2026-10-20":3,"2026-10-21":2,"2026-10-24":5,"2026-10-27":1,"2026-10-30":6,"2026-11-03":3,"2026-11-04":1,"2026-11-05":2,"2026-11-10":3,"2026-11-12":3,"2026-11-13":2,"2026-11-17":1,"2026-11-18":5,"2026-11-19":1,"2026-11-20":2,"2026-11-21":2}};
+  const PLAN_ACC = [{"folio":"AV26260109217","fecha":"2026-01-09","subrutina":"Financiera Día 05","kpi":"ADHERENCIA SIZING","estatus":"Abierta","descripcion":"Validar cargos administrativos con especialista PPM para ajuste de salarios / Personal contratado 2026","nota":""},{"folio":"AV26260109EQX","fecha":"2026-01-09","subrutina":"Financiera Día 05","kpi":"MANTENIMIENTO","estatus":"Abierta","descripcion":"Generar plan de mantenimientos locativos para el centro de distribución en el año 2026","nota":""},{"folio":"AV26260109JCC","fecha":"2026-01-09","subrutina":"Financiera Día 05","kpi":"MANTENIMIENTO","estatus":"Abierta","descripcion":"Revisar pagos de servicios de energía pendientes para el UDC Bosa (DIC 2025 - ENE 2026)","nota":""},{"folio":"AV26260109SX5","fecha":"2026-01-09","subrutina":"Financiera Día 05","kpi":"MANTENIMIENTO","estatus":"Cerrada","descripcion":"Ajustar rutina financiera con especialista PPM de la regional centro para 2026","nota":""},{"folio":"AV262601191M4","fecha":"2026-01-19","subrutina":"Financiera Día 05","kpi":"servicios_generales","estatus":"Cerrada","descripcion":"Validar el tema de las botas del personal operativo del OL, debido a que se encuentran en mal estado, y en OB está estipulado solamente botas en el mes de marzo y octubre, estás tienen una vida útil de 6 meses, las últimas entregadas se dieron en el mes de ago","nota":""},{"folio":"AV262601192XY","fecha":"2026-01-19","subrutina":"Financiera Día 05","kpi":"AUSENTISMO","estatus":"Cerrada","descripcion":"Revisar necesidad de enrolamiento en geovictoria de las personas que se encuentran en \"rentas\" que no hacen parte del OL ni del UC.","nota":""},{"folio":"AV26260205JRS","fecha":"2026-02-05","subrutina":"Central de Ruteo y Logística","kpi":"TCT","estatus":"Cerrada","descripcion":"Realizar data de drop size de los clientes del canal ka para validar el cierre de pedidos por la causal","nota":""},{"folio":"AV26260205GV7","fecha":"2026-02-05","subrutina":"Central de Ruteo y Logística","kpi":"TCT","estatus":"Cerrada","descripcion":"Realizar la modificación de coordenadas de clientes que se encuentran cerrados por datos maestros","nota":""},{"folio":"AV26260205BAV","fecha":"2026-02-05","subrutina":"Central de Ruteo y Logística","kpi":"TCT","estatus":"Cerrada","descripcion":"Realizar análisis de data de las frecuencias de KA para solicitar establecer frecuencias a los almacenes de grandes superficies","nota":""},{"folio":"AV26260205C30","fecha":"2026-02-05","subrutina":"Central de Ruteo y Logística","kpi":"TCT","estatus":"Cerrada","descripcion":"Enviar la asignación de placas x territorios","nota":""},{"folio":"AV262604254NX","fecha":"2026-04-25","subrutina":"Central de Ruteo y Logística","kpi":"TCT","estatus":"En revisión","descripcion":"Enviar correo de la propuesta de cambios de frecuencia al gerente de OCC para la aprobacion del proyeto","nota":""},{"folio":"AV262604257UU","fecha":"2026-04-25","subrutina":"Central de Ruteo y Logística","kpi":"TCT","estatus":"En revisión","descripcion":"Revisar territorios que puedan ser viables para cambio de frecuencia para nivelar el volumen de los dias luju.","nota":""},{"folio":"AV26260425DH6","fecha":"2026-04-25","subrutina":"Central de Ruteo y Logística","kpi":"TCT","estatus":"En revisión","descripcion":"Reunirnos con catalina Ureña para validar icaro realizado al canal KA para su aprobación,","nota":""},{"folio":"AV26260425UEH","fecha":"2026-04-25","subrutina":"Central de Ruteo y Logística","kpi":"TCT","estatus":"En revisión","descripcion":"Realizar consolidado del cumplimiento de asignacion de placa con territorios para tener validar si se estan cumpliendo las asignaciones realizadas","nota":""},{"folio":"AV262604288U9","fecha":"2026-04-27","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"STOCK_OUT","estatus":"Cerrada","descripcion":"Solicitar cambios y priorización de transitos de 3751 Club Col R 330X30 por agotado a 3 días de cobertura","nota":""},{"folio":"AV262604286OI","fecha":"2026-04-27","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"STOCK_OUT","estatus":"Cerrada","descripcion":"Solicitar cambios y priorización de transitos de 3810 Pony malta pet 200cc X 30 por agotado a 3 días de cobertura","nota":""},{"folio":"AV26260506BJM","fecha":"2026-05-06","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Realizar solicitud de cambios de la 2511 Cola & pola RN 330X30 por alto impacto en TSO con una cobertura de 2,1 fuera de política target de 5,5 días de cobertura","nota":""},{"folio":"AV26260506KBU","fecha":"2026-05-06","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Realizar ampliación de franjas de atención de T1 para recepción de 20877 Costeña RB 750 CCx16 por impacto en agotado con 1 día de cobertura","nota":""},{"folio":"AV262605066UF","fecha":"2026-05-06","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Realizar solicitud de priorización de tránsitos de 2882 Cola y Pola 1.5L X6 por impacto en agotado con -2 días de cobertura","nota":""},{"folio":"AV26260507B5P","fecha":"2026-05-07","subrutina":"Central de Ruteo y Logística","kpi":"TCT","estatus":"En revisión","descripcion":"Validar ruta 715 su adherencia en km y buscar alternativas para reducir la jornada laboral de ese territorio","nota":""},{"folio":"AV26260507PLF","fecha":"2026-05-07","subrutina":"Central de Ruteo y Logística","kpi":"TCT","estatus":"En revisión","descripcion":"Enviar clientes no plan por frecuencia para validar su cambio de frecuencia para poder entregar en la zona dispuesta.","nota":""},{"folio":"AV26260507V12","fecha":"2026-05-07","subrutina":"Central de Ruteo y Logística","kpi":"ATCT","estatus":"En revisión","descripcion":"sacar datos del sector que se movio de frecuencia lu-ju a mi-sa para validar si los clientes mejoran en los indicadores de servicio y entrega","nota":""},{"folio":"AV26260514A6B","fecha":"2026-05-14","subrutina":"Central de Ruteo y Logística","kpi":"TCT","estatus":"En revisión","descripcion":"Realizar validacion de los territorios lunes y sabados por desviaciones en el cumplimiento de adherencia km","nota":""},{"folio":"AV26260514UBC","fecha":"2026-05-14","subrutina":"Central de Ruteo y Logística","kpi":"TCT","estatus":"En revisión","descripcion":"Realizar validación de los clientes cerrados POR ZF,MT,MC para realizar el cambio de frecuencia y coordenadas.","nota":""},{"folio":"AV26260516YF3","fecha":"2026-05-15","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"STOCK_OUT","estatus":"Cerrada","descripcion":"Solicitar traspaso de Montevideo a Autosur del SKU 5630 Aguila lta 473x6 por agotado de 0 Hl Y FRC de 5Hl","nota":""},{"folio":"AV26260516A2M","fecha":"2026-05-15","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"STOCK_OUT","estatus":"Cerrada","descripcion":"Solicitar priorización de tránsitosn en 2174 por desviación en stock out con un 52,52 HL","nota":""},{"folio":"AV26260516IIU","fecha":"2026-05-15","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"STOCK_OUT","estatus":"Cerrada","descripcion":"Solicitar tránsitos de 2882 por agotado durante la semana 20 de 106 Hl","nota":""},{"folio":"AV26260522SIP","fecha":"2026-05-22","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar material 3128 a Alejandra Alvarez por que tenemos 2.8 DC, estamos al limite para incurrir en TSO,FRC diario de1639 para la semana en curso","nota":""},{"folio":"AV262605228R4","fecha":"2026-05-22","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar material 9480 a Aleja Alvarez por riesgo de agotado de 121 HL según FRC asignado para la semana 21","nota":""},{"folio":"AV26260522FNC","fecha":"2026-05-22","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar material 2224 por venta a cliente mayorista lo cual nos deja con 2.9 DC, solicitud de 20 estibas para llegar a 7.5 DC demanda de 53.4 HL día","nota":"Cambios generados"},{"folio":"AV26260526H1O","fecha":"2026-05-26","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Priorizar el descargue de botelleros con material 2512 por riesgo de impacto en TSO para el D+1 ya que tenemos 2.0 DC con demanda planteada para la semana 22 de 838HL.","nota":"Se priorizan placas con el material"},{"folio":"AV26260526LTF","fecha":"2026-05-26","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar material 9508 por riesgo de agotado D+3 por pedidos de mayoristas, actualmente con 3.4 DC, según FRC para la semana 22 de 261 HL","nota":"Se redireccionan 2 vehículos de Montevideo a Autosur"},{"folio":"AV26260528LGM","fecha":"2026-05-27","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar traspasos de 9508 por negociación del mismo, tenemos 1.9 días de cobertura FRC de 261 HL, 425 HL en transito","nota":""},{"folio":"AV26260527UEH","fecha":"2026-05-27","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Adelantar descargue de botellero 801 con material 3751 ya que presenta riesgo en TSO con para el D+1 con demanda cargada para la semana 22 de 65HL","nota":""},{"folio":"AV26260528T5N","fecha":"2026-05-27","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar priorización de material 2512 por riesgo de agotado TSO al D+2, tenemos 1.8 DC, con 458 HL en transito y 1220 HL para plan","nota":""},{"folio":"AV26260531UY6","fecha":"2026-05-30","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar material 2512 por riesgo de agotado para el D+3 ya que se tiene 2.7 DC, se tienen 887 HL de demanda por dia","nota":""},{"folio":"AV26260531WSH","fecha":"2026-05-30","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar material 9480 ya que tenemos 3 DC, con una demanda cargada para la semana 22 por 85 HL","nota":"se trae un viaje desde Montevideo"},{"folio":"AV26260531SAE","fecha":"2026-05-30","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar material 9508 por riesgo de agotado al D+3 con FRC de 276 HL","nota":""},{"folio":"AV262605312HF","fecha":"2026-05-30","subrutina":"Financiera Día 20","kpi":"DQI","estatus":"Abierta","descripcion":"realizar","nota":""},{"folio":"AV262605310MI","fecha":"2026-05-30","subrutina":"Financiera Día 20","kpi":"ATCT","estatus":"Abierta","descripcion":"Realizar..","nota":""},{"folio":"AV26260531ESO","fecha":"2026-05-30","subrutina":"Financiera Día 20","kpi":"CAPACIDAD_1ER_VIAJE","estatus":"Abierta","descripcion":"Realizar...","nota":""},{"folio":"AV2626061962C","fecha":"2026-06-19","subrutina":"Central de Ruteo y Logística","kpi":"ATCT","estatus":"Abierta","descripcion":"Validar la unificación de territorios para disminuir el uso de las camionetas en la planeacion del CD","nota":""},{"folio":"AV26260619QX0","fecha":"2026-06-19","subrutina":"Central de Ruteo y Logística","kpi":"TCT","estatus":"Abierta","descripcion":"Enviar consolidado de asigancion de placa por territorio de todos los dias","nota":""},{"folio":"AV262606231D8","fecha":"2026-06-23","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Priorizar descargue de placas con material 2882 por riesgo de agotado TSO para el D+1; se tienen 2.7 DC, 306 HL en transito, con un FRC asignado de 60 HL","nota":""},{"folio":"AV26260623BAB","fecha":"2026-06-23","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Priorizar descargue de placas con material 2512 por riesgo de agotado TSO para el D+2; se tienen 2.9 DC, 298 HL en transito y 2147 HL en plan. se tiene asignado un FRC de 956 HL","nota":""},{"folio":"AV26260623YFV","fecha":"2026-06-23","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Priorizar descargue de placas con material 2511 por riesgo de agotado TSO para el D+1; se tienen 0.2 DC, 138 HL en transito y FRC de 27 HL","nota":"Se priorizan transitos"},{"folio":"AV26260623YL4","fecha":"2026-06-23","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar material 2174 ya que se tienen 2.0 DC, se tiene riesgo de agotado TSO para el D+2 con un FRC asignado para la semana 26 de 149 HL","nota":"produccion para el dia de hoy de 15.818 HL"},{"folio":"AV2626062512J","fecha":"2026-06-25","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar material 9508 por riesgo de agotado, si bien estamos bien en coberturas, hoy tenemos salida de producto que nos va a dejar con 3,1 DC","nota":""},{"folio":"AV262606258NO","fecha":"2026-06-25","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar material 2174por riesgo de agotado, si bien estamos bien en coberturas, hoy tenemos salida de producto que nos va a dejar con 2.4 DC","nota":""},{"folio":"AV262606291JH","fecha":"2026-06-29","subrutina":"Financiera Día 05","kpi":"total-productivity","estatus":"Cerrada","descripcion":"Realizar análisis de volumen a entregar con UDs hibridas","nota":""},{"folio":"AV26260629H7V","fecha":"2026-06-29","subrutina":"Financiera Día 05","kpi":"total-productivity","estatus":"Cerrada","descripcion":"Identificar posibles clientes T4 para mover a UD Hibrida- Bench Cali","nota":""},{"folio":"AV26260629YG6","fecha":"2026-06-29","subrutina":"Financiera Día 20","kpi":"VLC_T2","estatus":"Cerrada","descripcion":"Generar Benchmark con Cali para mejora de TP e impacto en VLC","nota":""},{"folio":"AV26260629YGF","fecha":"2026-06-29","subrutina":"Financiera Día 05","kpi":"total-productivity","estatus":"Cerrada","descripcion":"Validar impacto en TP al utilizar UD Hibrida","nota":""},{"folio":"AV26260728DDA","fecha":"2026-07-28","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar material 9480 por riesgo de TSO, con demanda de 57 HL dia y 7 dias de cobertura por sobreventa","nota":""},{"folio":"AV26260728CWW","fecha":"2026-07-28","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar material 9494 por riesgo de agotado TSO, con demanda diaria de 10 HL","nota":"se genera una vez se tenga produccion"},{"folio":"AV26260807CCI","fecha":"2026-08-07","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"OutStock","estatus":"Cerrada","descripcion":"Solicitar apoyo de inventarios de 2182 y 9494 por TSO de 30 HL","nota":""},{"folio":"AV2626081417S","fecha":"2026-08-14","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"OutStock","estatus":"Cerrada","descripcion":"Realizar traspaso con Siberia de 2174 por SO en el CD y en planta. Apalancar el número mientras se obtiene el producto de planta.","nota":""},{"folio":"AV26260903A3Q","fecha":"2026-09-03","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar material 2182 por riesgo de agotado TSO ya que se tienen 2.5 DC","nota":""},{"folio":"AV26260903B52","fecha":"2026-09-03","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar material 7078 por riesgo de agotado TSO con demanda de 18HL dia","nota":""},{"folio":"AV26260914CJJ","fecha":"2026-09-14","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar material 9480 por riesgo de agotado TSO, con una demanda para la semana 38 de 45HL, se tienen solo 2 DC","nota":""},{"folio":"AV26260914HR9","fecha":"2026-09-14","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar material 9494 por riesgo de TSO con demanda de 17 HL y 1.7 DC","nota":""},{"folio":"AV26260914Q6E","fecha":"2026-09-14","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar material Kaufmann sku 22270, aunque tenemos 8 DC, tenemos despacho para mayoristas, y vamos a quedar bajo coberturas","nota":""},{"folio":"AV262609167OU","fecha":"2026-09-16","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Priorizar el descargue de 3128 y 22270 por riesgo de agotado TSO para el D+1","nota":""},{"folio":"AV26260916DW2","fecha":"2026-09-16","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Priorizar decargue de material 3128 por riesgo de agotado TSO para el D+2 con demanda diaria de 1818 HL","nota":""},{"folio":"AV26260916IFU","fecha":"2026-09-16","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar cargue con prioridad del material en plan de traspasos 9494 desde Boyaca,por riesgo de agotado TSO y demanda de22HL dia","nota":""},{"folio":"AV26260916V4Q","fecha":"2026-09-16","subrutina":"Rutina semanal/mensual Inventory Planning","kpi":"TSO","estatus":"Cerrada","descripcion":"Solicitar adicionales de material 22270 por riesgo para el D+3 en TSO, con demanda de128 HL se tienen 2.1 DC y si bien vienen transitos, se debe continuar enviando para evitar riesgos futuros con demanda tan alta","nota":""},{"folio":"MAN-009","fecha":"2026-10-08","subrutina":"Financiera Día 05","kpi":"WNP","estatus":"Cerrada","descripcion":"(CHAMPIONS) Realizar reunión con el equipo de almacén para tomar estos meses como referencia para identificar la relación de volumen/personas más eficientes y replicar las condiciones que generaron mayor productividad.","nota":"CHAMPIONS"},{"folio":"MAN-010","fecha":"2026-10-08","subrutina":"Financiera Día 05","kpi":"VLC_T2","estatus":"Cerrada","descripcion":"Ajustar con el UC y OL la fecha límite de conciliación del OB para el 5 de septiembre, esto para adelantar las provisiones y el presupuesto del CD.","nota":""},{"folio":"MAN-011","fecha":"2026-10-09","subrutina":"Financiera Día 05","kpi":"VLC_T2","estatus":"Cerrada","descripcion":"Regular el costo de motocarro en zonas de difícil acceso, dado el incremento que se tiene vs HL movilizados, esto para priorizar el costo proporcional HL movilizado, costo ejecutado.","nota":""},{"folio":"MAN-012","fecha":"2026-10-09","subrutina":"Financiera Día 05","kpi":"VLC_T2","estatus":"Cerrada","descripcion":"Ajustar con el UC y OL la fecha límite de conciliación del OB para el 5 de septiembre, esto para adelantar las provisiones y el presupuesto del CD.","nota":""},{"folio":"MAN-013","fecha":"2026-10-09","subrutina":"Financiera Día 05","kpi":"VLC_T2","estatus":"Cerrada","descripcion":"Regular el costo de motocarro en zonas de difícil acceso, dado el incremento que se tiene vs HL movilizados, esto para priorizar el costo proporcional HL movilizado, costo ejecutado.","nota":""},{"folio":"MAN-015","fecha":"2026-10-13","subrutina":"Financiera Día 05","kpi":"VLC_T2","estatus":"Cerrada","descripcion":"(RUTINA FINANCIERA) Revisar con Jarol Leon Salazar, la estandarización y aumento de las tarifas, desde el BGT 2027, para el canal UD-DSD, que la base presupuestal quede establecida y así mitigar los explotes.","nota":""},{"folio":"MAN-014","fecha":"2026-10-13","subrutina":"Financiera Día 05","kpi":"VLC_T2","estatus":"Cerrada","descripcion":"(Rutina Financiera) Solicitar a Karen Buenahora Castañeda, la ejecución de los peajes, mes de junio y julio, para verificar el Pareto y así generar reducción en el paquete.","nota":""},{"folio":"MAN-016","fecha":"2026-10-13","subrutina":"Financiera Día 05","kpi":"VOLUMEN","estatus":"Cerrada","descripcion":"(CHAMPIONS) Enviar correo al equipo UC respecto al HC para optimizar el dimensionamiento del personal frente al volumen proyectado, buscando movilizar una mayor cantidad de HL con una menor cantidad de personas, sin afectar la operación. Revisando diariamente ","nota":"CHAMPIONS Sizing Productivity"}];
+  const RUTINAS = [
+    {n: 'Diaria Logistica', f: 'Diaria', dias: [1,2,3,4,5], due: 'Líder CD People'},
+    {n: 'Matutina de Distribución', f: 'Diaria', dias: [1,2,3,4,5], due: 'Torre de control'},
+    {n: 'Cambio de turno almacén', f: 'Diaria', dias: [1,2,3,4,5], due: 'Supervisor de almacén'},
+    {n: 'Semanal de Flota', f: 'Semanal', due: 'Supervisor de flota'},
+    {n: 'Rutina Semanal Safety', f: 'Semanal', due: 'Líder de SST'},
+    {n: 'Rutina semanal de People', f: 'Semanal', due: 'Administrador OL'},
+    {n: 'Rutina semanal de distribución', f: 'Semanal', due: 'Torre de control'},
+    {n: 'Semanal de Almacén', f: 'Semanal', due: 'Coordinador de almacén'},
+    {n: 'OWDs', f: 'Semanal', due: 'Líder de SST'},
+    {n: 'Rutina 5s', f: 'Semanal', due: 'Líder CD People'},
+    {n: 'Semanal Ventas y Logística (RCOG)', f: 'Semanal', due: 'Coordinador de distribución'},
+    {n: 'Rutinas planning', f: 'Semanal', due: 'Inventory Planning · Financiera Día 05 y 20 · Central de Ruteo', grupo: true},
+    {n: 'Comite de Gente (mensual)', f: 'Mensual', due: 'Líder CD People'},
+    {n: 'Comite de Seguridad y Salud Ocupacional', f: 'Mensual', due: 'Líder de SST'},
+    {n: 'Check to Coach', f: 'Eventual', due: 'Líder de SST'}
+  ];
+  const PREG = ['¿Se cumplió en el horario y el tiempo de la TOR?', '¿Se revisaron las acciones pendientes y vencidas?', '¿Los indicadores estaban actualizados?', '¿Cada KPI en rojo tuvo dueño y acción o herramienta?', '¿Las acciones nuevas quedaron en el Action Log?'];
+  const MESES = ['2026-07', '2026-08', '2026-09', '2026-10'];
+  const MN = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const LOG_HASTA = '2026-11-22';
+  const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+  const pad = (n) => String(n).padStart(2, '0');
+  const iso = (d) => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  const hoy = iso(new Date());
+  const pct = (v) => v == null ? '—' : Math.round(v * 100) + ' %';
+  let checks = [], db = null, mes = MESES.filter(m => m <= hoy.slice(0, 7)).slice(-1)[0] || MESES[0], respuestas = [null, null, null, null, null], indicadores = [], puedeEscribir = true; const abiertos = new Set();
+
+  // ---------- Check form ----------
+  const fRut = document.getElementById('fRut'), fFecha = document.getElementById('fFecha');
+  RUTINAS.forEach(r => { const o = el('option', '', r.n); o.value = r.n; fRut.appendChild(o); });
+  fFecha.value = hoy;
+  const yn = document.getElementById('yn');
+  PREG.forEach((p, i) => {
+    const row = el('div', 'yn'); row.appendChild(el('span', 't', 'P' + (i + 1) + ' · ' + p));
+    const seg = el('div', 'seg'); seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Respuesta P' + (i + 1));
+    [['Sí', true, 'si'], ['No', false, 'no']].forEach(([t, v, c]) => {
+      const b = el('button', c, t); b.type = 'button'; b.setAttribute('aria-pressed', 'false');
+      b.addEventListener('click', () => { respuestas[i] = v; seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); score(); });
+      seg.appendChild(b);
+    });
+    row.appendChild(seg); yn.appendChild(row);
+  });
+  function score() {
+    const n = respuestas.filter(v => v !== null).length, s = respuestas.filter(v => v === true).length;
+    document.getElementById('fScore').textContent = (s * 20) + ' %';
+    document.getElementById('fScoreTxt').textContent = n < 5 ? `Faltan ${5 - n} respuestas` : s >= 4 ? 'Sesión efectiva' : 'Sesión no efectiva: deja la observación';
+  }
+  const fMsg = document.getElementById('fMsg');
+  document.getElementById('frm').addEventListener('submit', async (ev) => {
+    ev.preventDefault(); fMsg.className = 'msg';
+    if (!db) { fMsg.className = 'msg err'; fMsg.textContent = 'Abre la página con tu cuenta de Claude para guardar.'; return; }
+    if (!fFecha.value) { fMsg.className = 'msg err'; fMsg.textContent = 'Indica la fecha de la sesión.'; return; }
+    if (respuestas.some(v => v === null)) { fMsg.className = 'msg err'; fMsg.textContent = 'Responde las 5 preguntas antes de guardar.'; return; }
+    const btn = document.getElementById('fSave'); btn.disabled = true;
+    const s = respuestas.filter(Boolean).length;
+    try {
+      await db.collection('checks').add({rutina: fRut.value, fecha: fFecha.value, mes: fFecha.value.slice(0, 7), evaluador: document.getElementById('fEval').value.trim().slice(0, 80),
+        p1: respuestas[0], p2: respuestas[1], p3: respuestas[2], p4: respuestas[3], p5: respuestas[4], puntaje: s / 5, obs: document.getElementById('fObs').value.trim().slice(0, 400), creado: new Date().toISOString()});
+      fMsg.className = 'msg ok'; fMsg.textContent = 'Check guardado: ' + fRut.value + ', ' + (s * 20) + ' %.';
+      respuestas = [null, null, null, null, null]; yn.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', 'false')); document.getElementById('fObs').value = ''; score();
+    } catch (e) { fMsg.className = 'msg err'; fMsg.textContent = 'No se pudo guardar. Necesitas permiso de edición en esta página.'; }
+    btn.disabled = false;
+  });
+
+  // ---------- Tracker ----------
+  const chips = document.getElementById('mesChips');
+  MESES.forEach(m => {
+    const b = el('button', 'chip' + (m === mes ? ' active' : '')); b.type = 'button';
+    b.append(MN[Number(m.slice(5)) - 1].replace(/^./, c => c.toUpperCase()));
+    if (m <= '2026-11') b.appendChild(el('small', '', 'LOG'));
+    b.addEventListener('click', () => { mes = m; chips.querySelectorAll('.chip').forEach(x => x.classList.toggle('active', x === b)); renderTracker(); });
+    chips.appendChild(b);
+  });
+
+  function diasMes(m) { const [y, mm] = m.split('-').map(Number); const out = []; const d = new Date(y, mm - 1, 1); while (d.getMonth() === mm - 1) { out.push(new Date(d)); d.setDate(d.getDate() + 1); } return out; }
+  const lunes = (s) => { const d = new Date(s + 'T12:00:00'); const w = (d.getDay() + 6) % 7; d.setDate(d.getDate() - w); return iso(d); };
+
+  function evaluar(r, m) {
+    const dias = diasMes(m), log = new Set(Object.keys(HIST[r.n] || {}).filter(d => d.startsWith(m)));
+    const cnt = HIST[r.n] || {}; const acciones = [...log].reduce((t, d) => t + cnt[d], 0);
+    const ck = checks.filter(c => c.rutina === r.n && c.mes === m);
+    const ckDia = new Map(); ck.forEach(c => { const p = ckDia.get(c.fecha); ckDia.set(c.fecha, p == null ? c.puntaje : Math.max(p, c.puntaje)); });
+    const sesiones = new Set([...log, ...ckDia.keys()]);
+    const pasado = (s) => s <= hoy;
+    let esperadas = 0, ejecutadas = 0;
+    if (r.f === 'Diaria') {
+      const prog = dias.filter(d => r.dias.includes(d.getDay()) && pasado(iso(d))).map(iso);
+      esperadas = prog.length; ejecutadas = prog.filter(s => sesiones.has(s)).length;
+    } else if (r.f === 'Semanal') {
+      // A week belongs to the month that holds its Thursday
+      const lun = dias.filter(d => d.getDay() === 4).map(d => { const x = new Date(d); x.setDate(x.getDate() - 3); return iso(x); }).filter(pasado);
+      const todas = new Set([...Object.keys(HIST[r.n] || {}), ...checks.filter(c => c.rutina === r.n).map(c => c.fecha)].map(lunes));
+      esperadas = lun.length; ejecutadas = lun.filter(l => todas.has(l)).length;
+    } else if (r.f === 'Mensual') {
+      esperadas = pasado(m + '-01') ? 1 : 0; ejecutadas = sesiones.size ? 1 : 0;
+    } else { esperadas = 0; ejecutadas = sesiones.size; }
+    const efec = ck.length ? ck.reduce((t, c) => t + c.puntaje, 0) / ck.length : null;
+    return {acciones, cnt, esperadas, ejecutadas, cumpl: esperadas ? Math.min(1, ejecutadas / esperadas) : null, efec, nCk: ck.length, sesiones, ckDia, dias, log};
+  }
+
+  function strip(r, e) {
+    const box = el('div', 'days');
+    for (const d of e.dias) {
+      const s = iso(d); const c = el('span', 'dd');
+      const prog = r.f === 'Diaria' && r.dias.includes(d.getDay());
+      if (e.ckDia.has(s)) c.classList.add(e.ckDia.get(s) >= 0.8 ? 'okc' : 'lowc');
+      else if (e.log.has(s)) c.classList.add('ex');
+      else if (prog && s <= hoy) c.classList.add(s <= LOG_HASTA ? 'nolog' : 'miss');
+      else if (!prog && r.f === 'Diaria') c.classList.add('off');
+      c.title = d.getDate() + ' de ' + MN[d.getMonth()] + (e.ckDia.has(s) ? ' · check ' + Math.round(e.ckDia.get(s) * 100) + ' %' : e.log.has(s) ? ' · ' + e.cnt[s] + (e.cnt[s] === 1 ? ' acción' : ' acciones') + ' en el Action Log' : '');
+      box.appendChild(c);
+    }
+    return box;
+  }
+
+  function detalle(m) {
+    const tr = el('tr', 'det'); const td = el('td'); td.colSpan = 8;
+    const acc = PLAN_ACC.filter(a => a.fecha.startsWith(m));
+    const subs = [...new Set(PLAN_ACC.map(a => a.subrutina))];
+    const head = el('div', 'det-head'); head.appendChild(el('b', '', 'Acciones de Rutinas planning en ' + MN[Number(m.slice(5)) - 1] + ': ' + acc.length));
+    subs.forEach(sname => head.appendChild(el('span', 'tagx', sname.replace('Rutina semanal/mensual ', '') + ' · ' + acc.filter(a => a.subrutina === sname).length)));
+    td.appendChild(head);
+    if (!acc.length) td.appendChild(el('p', 'rsub', 'No hay acciones registradas este mes en las rutinas de planning.'));
+    else {
+      const t = el('table', 'det-t'); const th = el('tr'); ['Fecha', 'Rutina', 'KPI', 'Estado', 'Descripción'].forEach(x => th.appendChild(el('th', '', x)));
+      const thead = el('thead'); thead.appendChild(th); t.appendChild(thead); const tbd = el('tbody');
+      acc.forEach(a => { const r = el('tr'); r.append(el('td', 'mono', a.fecha), el('td', '', a.subrutina.replace('Rutina semanal/mensual ', '')), el('td', 'mono', a.kpi));
+        const te = el('td'); te.appendChild(el('span', 'pill ' + (a.estatus === 'Cerrada' ? 'p-ok' : a.estatus === 'Abierta' ? 'p-bad' : 'p-warn'), a.estatus)); r.appendChild(te);
+        const d = el('td', '', a.descripcion); if (a.nota) d.appendChild(el('div', 'rsub', 'Cierre: ' + a.nota)); r.appendChild(d); tbd.appendChild(r); });
+      t.appendChild(tbd); td.appendChild(t);
+    }
+    tr.appendChild(td); return tr;
+  }
+
+  function renderTracker() {
+    const tb = document.getElementById('tBody'); tb.textContent = '';
+    let sumE = 0, sumX = 0, full = 0, prog = 0, cero = 0, totAcc = 0; const efs = [];
+    for (const r of RUTINAS) {
+      const e = evaluar(r, mes);
+      if (e.esperadas) { prog++; sumE += e.esperadas; sumX += Math.min(e.ejecutadas, e.esperadas); if (e.ejecutadas >= e.esperadas) full++; if (!e.ejecutadas) cero++; }
+      if (e.efec != null) efs.push(e.efec);
+      const tr = el('tr');
+      const t = el('td');
+      if (r.grupo) {
+        const b = el('button', 'gbtn'); b.type = 'button'; b.setAttribute('aria-expanded', String(abiertos.has(r.n)));
+        b.append(el('span', 'car', abiertos.has(r.n) ? '▾' : '▸'), el('span', 'rname', r.n));
+        b.addEventListener('click', () => { abiertos.has(r.n) ? abiertos.delete(r.n) : abiertos.add(r.n); renderTracker(); });
+        t.append(b, el('div', 'rsub', r.due));
+      } else t.append(el('div', 'rname', r.n), el('div', 'rsub', r.due));
+      tr.appendChild(t);
+      tr.appendChild(el('td', '', r.f));
+      tr.appendChild(el('td', 'n mono', e.esperadas ? String(e.esperadas) : '—'));
+      tr.appendChild(el('td', 'n mono', String(e.ejecutadas)));
+      tr.insertBefore(el('td', 'n mono strong', String(e.acciones)), tr.children[2]); totAcc += e.acciones;
+      const tc = el('td'); const c = e.cumpl;
+      tc.appendChild(el('span', 'pill ' + (c == null ? 'p-neu' : c >= 1 ? 'p-ok' : c >= 0.8 ? 'p-warn' : 'p-bad'), c == null ? 'Sin frecuencia' : pct(c))); tr.appendChild(tc);
+      const te = el('td'); te.appendChild(el('span', 'pill ' + (e.efec == null ? 'p-neu' : e.efec >= 0.8 ? 'p-ok' : 'p-bad'), e.efec == null ? 'Sin check' : pct(e.efec) + ' · ' + e.nCk)); tr.appendChild(te);
+      const td = el('td'); td.appendChild(strip(r, e)); tr.appendChild(td);
+      tb.appendChild(tr);
+      if (r.grupo && abiertos.has(r.n)) tb.appendChild(detalle(mes));
+    }
+    document.getElementById('kAcc').textContent = String(totAcc);
+    document.getElementById('kCump').textContent = sumE ? pct(sumX / sumE) : '—';
+    document.getElementById('kFull').textContent = prog ? full + ' de ' + prog : '—';
+    document.getElementById('kCero').textContent = prog ? String(cero) : '—';
+    document.getElementById('kEfec').textContent = efs.length ? pct(efs.reduce((a, b) => a + b, 0) / efs.length) : '—';
+    document.getElementById('kEfecSub').textContent = efs.length ? 'según el check de 5 preguntas' : 'sin checks registrados en el mes';
+    renderChecks();
+  }
+
+  function renderChecks() {
+    const tb = document.getElementById('cBody'); tb.textContent = '';
+    document.getElementById('mChecks').textContent = String(checks.length);
+    const list = checks.filter(c => c.mes === mes).sort((a, b) => b.fecha.localeCompare(a.fecha) || String(b.creado).localeCompare(String(a.creado)));
+    if (!list.length) { const tr = el('tr'); const td = el('td', 'empty', db ? 'No hay checks registrados en este mes. Registra la primera sesión en el ítem 03.' : 'Abre la página con tu cuenta de Claude para ver los checks.'); td.colSpan = 6; tr.appendChild(td); tb.appendChild(tr); return; }
+    for (const c of list) {
+      const tr = el('tr');
+      tr.appendChild(el('td', 'mono', c.fecha)); tr.appendChild(el('td', '', c.rutina)); tr.appendChild(el('td', '', c.evaluador || '—'));
+      const tp = el('td', 'n'); tp.appendChild(el('span', 'pill ' + (c.puntaje >= 0.8 ? 'p-ok' : 'p-bad'), pct(c.puntaje))); tr.appendChild(tp);
+      const tm = el('td', 'marks'); [c.p1, c.p2, c.p3, c.p4, c.p5].forEach(v => tm.appendChild(el('span', v ? 'y' : 'n', v ? '✓' : '✗'))); tr.appendChild(tm);
+      tr.appendChild(el('td', '', c.obs || '—'));
+      tb.appendChild(tr);
+    }
+  }
+
+  // ---------- Indicators ----------
+  const MESES_IND = {'2026-11': 'nov 26', '2026-12': 'dic 26', '2027-01': 'ene 27', '2027-02': 'feb 27', '2027-03': 'mar 27'};
+  function renderInd() {
+    const head = document.getElementById('indHead'), body = document.getElementById('indBody'); head.textContent = ''; body.textContent = '';
+    const ms = Object.keys(MESES_IND); const tr = el('tr'); ['Indicador', 'Meta'].concat(ms.map(m => MESES_IND[m])).forEach(h => tr.appendChild(el('th', '', h))); head.appendChild(tr);
+    if (!indicadores.length) { const r = el('tr'); const td = el('td', 'def', db ? 'Todavía no hay indicadores registrados.' : 'Abre la página con tu cuenta de Claude para ver los indicadores.'); td.colSpan = ms.length + 2; r.appendChild(td); body.appendChild(r); return; }
+    for (const i of indicadores.slice().sort((x, y) => (x.orden || 0) - (y.orden || 0))) {
+      const r = el('tr'); const t = el('td'); const nm = el('div', '', i.nombre); nm.style.fontWeight = '600'; t.append(nm, el('div', 'def', i.definicion || '')); r.appendChild(t);
+      r.appendChild(el('td', 'meta', (i.sentido === 'menor' ? '≤ ' : '≥ ') + i.meta + (i.unidad || '')));
+      ms.forEach(m => {
+        const td = el('td'); const inp = el('input', 'cell'); inp.inputMode = 'decimal'; inp.setAttribute('aria-label', i.nombre + ' ' + MESES_IND[m]);
+        const v = (i.valores || {})[m]; inp.value = v == null ? '' : String(v).replace('.', ','); inp.disabled = !puedeEscribir; inp.placeholder = '–';
+        const paint = () => { inp.classList.remove('ok', 'bad'); const n = parseFloat(inp.value.replace(',', '.')); if (isNaN(n)) return; inp.classList.add((i.sentido === 'menor' ? n <= i.meta : n >= i.meta) ? 'ok' : 'bad'); };
+        paint();
+        inp.addEventListener('change', async () => {
+          const raw = inp.value.trim().replace(',', '.'); const n = raw === '' ? null : Number(raw);
+          if (raw !== '' && isNaN(n)) { inp.value = ''; paint(); return; }
+          const valores = Object.assign({}, i.valores || {}); if (n == null) delete valores[m]; else valores[m] = n; paint();
+          try { await db.doc('indicadores/' + i.id).update({valores}); } catch (e) { inp.classList.add('bad'); }
+        });
+        td.appendChild(inp); r.appendChild(td);
+      });
+      body.appendChild(r);
+    }
+  }
+
+  score(); renderTracker(); renderInd();
+
+  (async () => {
+    db = window.claude ? await window.claude.use('db') : null;
+    if (!db) { renderTracker(); renderInd(); return; }
+    const user = await window.claude.use('user');
+    if (user) { const c = await user.can('data.write'); puedeEscribir = c !== false; }
+    if (!puedeEscribir) { document.getElementById('fSave').disabled = true; fMsg.textContent = 'Tienes acceso de solo lectura: no puedes registrar checks.'; }
+    db.collection('checks').onSnapshot((s) => { checks = s.docs.map(d => Object.assign({id: d.id}, d.data())).filter(c => c.rutina && c.fecha); renderTracker(); });
+    db.collection('indicadores').onSnapshot((s) => { indicadores = s.docs.map(d => Object.assign({id: d.id}, d.data())).filter(i => i.id !== 'i4' && i.id !== 'i6'); renderInd(); });
+  })();
+})();
+</script>
+
+</body></html>
